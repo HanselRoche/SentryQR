@@ -1,0 +1,24 @@
+{
+  "name": "sentryqr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SentryQR — cryptographically secure dynamic QR hostel access system (CNS PBL 22CSE71)",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "migrate": "npm run migrate --workspace backend",
+    "seed": "npm run seed --workspace backend",
+    "reset": "npm run reset --workspace backend",
+    "test": "npm test --workspace backend",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm start --workspace backend",
+    "demo": "npm run demo --workspace backend"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
