@@ -1,5 +1,9 @@
 import { useState } from 'react';
+import { ShieldAlert } from 'lucide-react';
 import { api } from '../../lib/api.js';
+import PageHeader from '../../components/PageHeader.jsx';
+import Card from '../../components/Card.jsx';
+import Alert from '../../components/Alert.jsx';
 
 /**
  * The edge case the roadmap calls out: a student with a dead phone.
@@ -33,51 +37,66 @@ export default function GuardOverride() {
   };
 
   return (
-    <div className="card">
-      <h2>Request manual override</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        For a student who genuinely cannot present a QR — a flat battery, a lost phone. This grants
-        nothing on its own: an administrator must approve it, and the approval is logged against the
-        student like any other entry.
-      </p>
+    <>
+      <PageHeader
+        title="Manual override"
+        subtitle="For a student who genuinely cannot present a QR — a flat battery, a lost phone."
+      />
 
-      {error && <div className="alert error">{error}</div>}
-      {status && (
-        <div className="alert success">
-          Request #{status.id} submitted for {status.studentName} ({status.rollNo}) and is awaiting
-          admin approval.
-        </div>
-      )}
+      <div className="grid-2">
+        <Card title="Request an override">
+          {error && <Alert tone="error">{error}</Alert>}
+          {status && (
+            <Alert tone="success">
+              Request #{status.id} submitted for {status.studentName} ({status.rollNo}) and is
+              awaiting admin approval.
+            </Alert>
+          )}
 
-      <form onSubmit={submit}>
-        <div className="field">
-          <label htmlFor="rollNo">Student roll number</label>
-          <input
-            id="rollNo"
-            value={rollNo}
-            onChange={(event) => setRollNo(event.target.value)}
-            placeholder="4SO22CS001"
-            required
-          />
-        </div>
+          <form onSubmit={submit}>
+            <div className="field">
+              <label htmlFor="rollNo">Student roll number</label>
+              <input
+                id="rollNo"
+                value={rollNo}
+                onChange={(event) => setRollNo(event.target.value)}
+                placeholder="4SO22CS001"
+                required
+              />
+            </div>
 
-        <div className="field">
-          <label htmlFor="reason">Reason (recorded in the audit log)</label>
-          <textarea
-            id="reason"
-            rows={3}
-            value={reason}
-            onChange={(event) => setReason(event.target.value)}
-            placeholder="Phone battery dead — student ID card checked visually"
-            minLength={5}
-            required
-          />
-        </div>
+            <div className="field">
+              <label htmlFor="reason">Reason (recorded in the audit log)</label>
+              <textarea
+                id="reason"
+                rows={3}
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                placeholder="Phone battery dead — student ID card checked visually"
+                minLength={5}
+                required
+              />
+            </div>
 
-        <button type="submit" disabled={busy}>
-          {busy ? 'Submitting…' : 'Submit for approval'}
-        </button>
-      </form>
-    </div>
+            <button type="submit" disabled={busy}>
+              <ShieldAlert size={15} />
+              {busy ? 'Submitting…' : 'Submit for approval'}
+            </button>
+          </form>
+        </Card>
+
+        <Card title="This grants nothing on its own">
+          <p className="muted" style={{ marginTop: 0 }}>
+            An administrator must approve the request before the student is let through. Only the
+            approval writes an entry event, and it is recorded against the student in exactly the
+            same audit trail as a cryptographic verification.
+          </p>
+          <p className="muted" style={{ marginBottom: 0 }}>
+            The entry appears with reason code <code>MANUAL_OVERRIDE</code>, so a manual admission is
+            always distinguishable from a signed one — never an invisible side channel.
+          </p>
+        </Card>
+      </div>
+    </>
   );
 }

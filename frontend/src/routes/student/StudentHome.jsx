@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
+import { ChevronDown, Fingerprint, RefreshCw, RotateCcw, ShieldCheck } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import {
   buildQrPayload,
@@ -10,6 +11,11 @@ import {
   saveKeyPair,
   signChallenge,
 } from '../../lib/webcrypto.js';
+import PageHeader from '../../components/PageHeader.jsx';
+import Card from '../../components/Card.jsx';
+import Alert from '../../components/Alert.jsx';
+import Avatar from '../../components/Avatar.jsx';
+import Badge from '../../components/Badge.jsx';
 
 // Refresh well before expiry so a scan never lands on a QR that goes stale
 // mid-frame. With a 45s server TTL this leaves ~15s of slack.
@@ -98,7 +104,7 @@ export default function StudentHome() {
     setProfile(await api.studentProfile());
   };
 
-  if (error && !profile) return <div className="alert error">{error}</div>;
+  if (error && !profile) return <Alert tone="error">{error}</Alert>;
   if (!profile) return <p className="muted">Loading…</p>;
 
   // Enrolment is needed when this browser holds no key, or when the server's
@@ -109,15 +115,44 @@ export default function StudentHome() {
 
   return (
     <>
-      <div className="card">
-        <h2>{profile.user.fullName}</h2>
-        <p className="muted" style={{ margin: 0 }}>
-          {profile.student?.rollNo} · Room {profile.student?.roomNo} · Block{' '}
-          {profile.student?.hostelBlock}
-        </p>
-      </div>
+      <PageHeader
+        title="My entry pass"
+        subtitle="A fresh signature, valid for 45 seconds and accepted exactly once."
+        actions={
+          !needsEnrolment && (
+            <button className="secondary" onClick={refresh}>
+              <RefreshCw size={15} />
+              Refresh now
+            </button>
+          )
+        }
+      />
 
-      {error && <div className="alert error">{error}</div>}
+      <Card>
+        <div className="identity-card">
+          <Avatar name={profile.user.fullName} />
+          <div>
+            <h2 className="card-title" style={{ marginBottom: '0.15rem' }}>
+              {profile.user.fullName}
+            </h2>
+            <p className="muted" style={{ margin: 0 }}>
+              {profile.student?.rollNo} · Room {profile.student?.roomNo} · Block{' '}
+              {profile.student?.hostelBlock}
+            </p>
+          </div>
+          <div style={{ marginLeft: 'auto' }}>
+            {serverKid ? (
+              <Badge tone="grant" className="mono">
+                {serverKid}
+              </Badge>
+            ) : (
+              <Badge tone="warn">no device key</Badge>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {error && <Alert tone="error">{error}</Alert>}
 
       {needsEnrolment ? (
         <EnrolmentCard
@@ -128,12 +163,7 @@ export default function StudentHome() {
           mismatched={Boolean(deviceKey && serverKid && deviceKey.kid !== serverKid)}
         />
       ) : (
-        <QrCard
-          challenge={challenge}
-          deviceKey={deviceKey}
-          onRefresh={refresh}
-          onReset={resetDevice}
-        />
+        <QrCard challenge={challenge} deviceKey={deviceKey} onReset={resetDevice} />
       )}
     </>
   );
@@ -141,22 +171,20 @@ export default function StudentHome() {
 
 function EnrolmentCard({ busy, onEnrol, hasLocalKey, serverHasKey, mismatched }) {
   return (
-    <div className="card">
-      <h2>Enrol this device</h2>
-
+    <Card title="Enrol this device">
       {mismatched && (
-        <div className="alert error">
-          The key stored in this browser is no longer the one registered on the server. It was either
-          revoked by an administrator, or superseded when you enrolled a different device. Enrol
-          again to continue.
-        </div>
+        <Alert tone="error">
+          The key stored in this browser is no longer the one registered on the server. It was
+          either revoked by an administrator, or superseded when you enrolled a different device.
+          Enrol again to continue.
+        </Alert>
       )}
       {!hasLocalKey && serverHasKey && !mismatched && (
-        <div className="alert info">
+        <Alert tone="info">
           Your account has a registered key, but it belongs to a different browser or device. Keys
           cannot be copied between devices — that is precisely what stops credential sharing. Enrol
           this device to give it its own key.
-        </div>
+        </Alert>
       )}
 
       <p className="muted">
@@ -167,13 +195,14 @@ function EnrolmentCard({ busy, onEnrol, hasLocalKey, serverHasKey, mismatched })
       </p>
 
       <button onClick={onEnrol} disabled={busy}>
+        <Fingerprint size={16} />
         {busy ? 'Generating keypair…' : 'Generate key and enrol'}
       </button>
-    </div>
+    </Card>
   );
 }
 
-function QrCard({ challenge, deviceKey, onRefresh, onReset }) {
+function QrCard({ challenge, deviceKey, onReset }) {
   const canvasRef = useRef(null);
   const [remaining, setRemaining] = useState(0);
   const [proof, setProof] = useState(null);
@@ -210,8 +239,8 @@ function QrCard({ challenge, deviceKey, onRefresh, onReset }) {
   };
 
   return (
-    <>
-      <div className="card">
+    <div className="grid-2">
+      <Card>
         <div className="qr-stage">
           <div className={`qr-frame${expired ? ' stale' : ''}`}>
             <canvas ref={canvasRef} />
@@ -228,19 +257,17 @@ function QrCard({ challenge, deviceKey, onRefresh, onReset }) {
               <div className="muted">Refreshes automatically · single use only</div>
             </div>
           </div>
-
-          <button className="secondary small" onClick={onRefresh}>
-            Refresh now
-          </button>
         </div>
-      </div>
+      </Card>
 
-      <div className="card">
-        <h2>Why a screenshot of this is useless</h2>
+      <Card
+        title="Why a screenshot of this is useless"
+        subtitle="Three independent properties, each enough on its own to defeat a copy."
+      >
         <ul className="muted" style={{ marginTop: 0, paddingLeft: '1.1rem' }}>
           <li>
-            It expires {Math.round(total / 1000)} seconds after it was issued, and is replaced before
-            that.
+            It expires {Math.round(total / 1000)} seconds after it was issued, and is replaced
+            before that.
           </li>
           <li>It works exactly once — the server discards the nonce on the first successful scan.</li>
           <li>
@@ -249,35 +276,40 @@ function QrCard({ challenge, deviceKey, onRefresh, onReset }) {
           </li>
         </ul>
 
-        <div className="row" style={{ marginTop: '0.75rem' }}>
+        <div className="row" style={{ marginTop: '1rem' }}>
           <button className="secondary small" onClick={checkExtractability}>
+            <ShieldCheck size={14} />
             Verify the private key cannot be exported
           </button>
           <button className="danger small" onClick={onReset}>
+            <RotateCcw size={14} />
             Reset this device
           </button>
         </div>
 
         {proof !== null && (
-          <div className={`alert ${proof ? 'success' : 'error'}`} style={{ marginTop: '0.75rem' }}>
-            {proof
-              ? 'Confirmed — crypto.subtle.exportKey() refused to export the private key. It cannot leave this device.'
-              : 'Warning — the private key reported as extractable. That should never happen.'}
+          <div style={{ marginTop: '1rem' }}>
+            <Alert tone={proof ? 'success' : 'error'}>
+              {proof
+                ? 'Confirmed — crypto.subtle.exportKey() refused to export the private key. It cannot leave this device.'
+                : 'Warning — the private key reported as extractable. That should never happen.'}
+            </Alert>
           </div>
         )}
 
-        <details style={{ marginTop: '0.75rem' }}>
-          <summary className="muted" style={{ cursor: 'pointer' }}>
+        <details style={{ marginTop: '1rem' }}>
+          <summary>
+            <ChevronDown size={14} />
             Inspect the signed payload
           </summary>
-          <pre className="mono muted" style={{ overflowX: 'auto', fontSize: '0.75rem' }}>
+          <pre className="mono payload-pre">
             {JSON.stringify(JSON.parse(challenge.payload), null, 2)}
           </pre>
-          <p className="muted" style={{ fontSize: '0.8rem' }}>
+          <p className="muted" style={{ fontSize: '0.8rem', margin: 0 }}>
             Signed message: <code>{challenge.message}</code>
           </p>
         </details>
-      </div>
-    </>
+      </Card>
+    </div>
   );
 }

@@ -1,0 +1,623 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3400 2400" width="3400" height="2400">
+    <defs>
+        <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#080c14"/>
+            <stop offset="50%" stop-color="#0f172a"/>
+            <stop offset="100%" stop-color="#080c14"/>
+        </linearGradient>
+
+        <linearGradient id="header-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="35%" stop-color="#818cf8"/>
+            <stop offset="70%" stop-color="#c084fc"/>
+            <stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+
+        <!-- Air gap beam gradient -->
+        <linearGradient id="airgap-flow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="50%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#10b981"/>
+        </linearGradient>
+
+        <!-- Glow filter -->
+        <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+        </filter>
+
+        <!-- Arrow Markers -->
+        <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+        </marker>
+        <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+        </marker>
+        <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+        </marker>
+        <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#818cf8"/>
+        </marker>
+        <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+        </marker>
+
+        <style>
+            .font-mono { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+            .font-sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        </style>
+    </defs>
+
+    <!-- Background Canvas -->
+    <rect width="3400" height="2400" fill="url(#bg-grad)"/>
+
+    <!-- Subtle Background Grid -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.75" stroke-opacity="0.35"/>
+    </pattern>
+    <rect width="3400" height="2400" fill="url(#grid)" />
+
+    <g transform="translate(60, 40)">
+        <!-- Top Badge -->
+        <rect x="0" y="0" width="180" height="28" rx="14" fill="#0369a1" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="90" y="18" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle" class="font-sans" letter-spacing="1.5">SYSTEM FLOWCHART</text>
+        
+        <!-- Main Title -->
+        <text x="0" y="70" fill="url(#header-grad)" font-size="36" font-weight="800" class="font-sans" letter-spacing="-0.5">
+            SentryQR — End-to-End System Architecture &amp; Protocol Flowchart
+        </text>
+        
+        <!-- Subtitle -->
+        <text x="0" y="98" fill="#94a3b8" font-size="16" font-weight="400" class="font-sans">
+            Complete Authentication Lifecycle: Device Key Enrolment • Challenge-Response Flow • 10-Step Verification Engine • DB Concurrency
+        </text>
+
+        <!-- Right Header Metadata Badges -->
+        <g transform="translate(2320, 10)">
+            <rect x="0" y="0" width="220" height="36" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+            <circle cx="18" cy="18" r="6" fill="#818cf8"/>
+            <text x="32" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">ECDSA P-256 (WebCrypto)</text>
+
+            <rect x="235" y="0" width="230" height="36" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+            <circle cx="253" cy="18" r="6" fill="#34d399"/>
+            <text x="267" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">Single-Use Nonces (45s TTL)</text>
+
+            <rect x="480" y="0" width="230" height="36" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="498" cy="18" r="6" fill="#f59e0b"/>
+            <text x="512" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">Optical Air-Gap Hop</text>
+
+            <rect x="725" y="0" width="235" height="36" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+            <circle cx="743" cy="18" r="6" fill="#38bdf8"/>
+            <text x="757" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">SQLite Atomic UPDATE</text>
+        </g>
+    </g>
+    
+        <g transform="translate(60, 160)">
+            <!-- Lane Container -->
+            <rect x="0" y="0" width="580" height="2180" rx="14" fill="#0f172a" fill-opacity="0.6" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow)"/>
+            
+            <!-- Lane Header -->
+            <path d="M 0 14 Q 0 0 14 0 L 566 0 Q 580 0 580 14 L 580 52 L 0 52 Z" fill="#1e293b" fill-opacity="0.9"/>
+            <line x1="0" y1="52" x2="580" y2="52" stroke="#0284c7" stroke-width="1.5"/>
+            
+            <circle cx="20" cy="26" r="6" fill="#38bdf8"/>
+            <text x="36" y="24" fill="#38bdf8" font-size="13" font-weight="800" class="font-sans" letter-spacing="0.8">LANE 1: STUDENT CLIENT (Browser)</text>
+            <text x="36" y="42" fill="#94a3b8" font-size="11" class="font-sans">WebCrypto ECDSA • IndexedDB • Dynamic QR</text>
+        </g>
+        
+        <g transform="translate(670, 160)">
+            <!-- Lane Container -->
+            <rect x="0" y="0" width="580" height="2180" rx="14" fill="#0f172a" fill-opacity="0.6" stroke="#059669" stroke-width="1.5" filter="url(#shadow)"/>
+            
+            <!-- Lane Header -->
+            <path d="M 0 14 Q 0 0 14 0 L 566 0 Q 580 0 580 14 L 580 52 L 0 52 Z" fill="#1e293b" fill-opacity="0.9"/>
+            <line x1="0" y1="52" x2="580" y2="52" stroke="#059669" stroke-width="1.5"/>
+            
+            <circle cx="20" cy="26" r="6" fill="#34d399"/>
+            <text x="36" y="24" fill="#34d399" font-size="13" font-weight="800" class="font-sans" letter-spacing="0.8">LANE 2: OPTICAL AIR GAP &amp; GUARD SCANNER</text>
+            <text x="36" y="42" fill="#94a3b8" font-size="11" class="font-sans">html5-qrcode • Zero Authority Dumb Client</text>
+        </g>
+        
+        <g transform="translate(1280, 160)">
+            <!-- Lane Container -->
+            <rect x="0" y="0" width="960" height="2180" rx="14" fill="#0f172a" fill-opacity="0.6" stroke="#6366f1" stroke-width="1.5" filter="url(#shadow)"/>
+            
+            <!-- Lane Header -->
+            <path d="M 0 14 Q 0 0 14 0 L 946 0 Q 960 0 960 14 L 960 52 L 0 52 Z" fill="#1e293b" fill-opacity="0.9"/>
+            <line x1="0" y1="52" x2="960" y2="52" stroke="#6366f1" stroke-width="1.5"/>
+            
+            <circle cx="20" cy="26" r="6" fill="#818cf8"/>
+            <text x="36" y="24" fill="#818cf8" font-size="13" font-weight="800" class="font-sans" letter-spacing="0.8">LANE 3: BACKEND API &amp; VERIFICATION ENGINE</text>
+            <text x="36" y="42" fill="#94a3b8" font-size="11" class="font-sans">Challenge Service • 10-Step Pipeline • node:crypto</text>
+        </g>
+        
+        <g transform="translate(2270, 160)">
+            <!-- Lane Container -->
+            <rect x="0" y="0" width="510" height="2180" rx="14" fill="#0f172a" fill-opacity="0.6" stroke="#d97706" stroke-width="1.5" filter="url(#shadow)"/>
+            
+            <!-- Lane Header -->
+            <path d="M 0 14 Q 0 0 14 0 L 496 0 Q 510 0 510 14 L 510 52 L 0 52 Z" fill="#1e293b" fill-opacity="0.9"/>
+            <line x1="0" y1="52" x2="510" y2="52" stroke="#d97706" stroke-width="1.5"/>
+            
+            <circle cx="20" cy="26" r="6" fill="#f59e0b"/>
+            <text x="36" y="24" fill="#f59e0b" font-size="13" font-weight="800" class="font-sans" letter-spacing="0.8">LANE 4: SQLITE DATABASE (DURABLE STATE)</text>
+            <text x="36" y="42" fill="#94a3b8" font-size="11" class="font-sans">PRAGMA journal_mode=WAL • Atomic UPDATE</text>
+        </g>
+        
+        <g transform="translate(2810, 160)">
+            <!-- Lane Container -->
+            <rect x="0" y="0" width="530" height="2180" rx="14" fill="#0f172a" fill-opacity="0.6" stroke="#db2777" stroke-width="1.5" filter="url(#shadow)"/>
+            
+            <!-- Lane Header -->
+            <path d="M 0 14 Q 0 0 14 0 L 516 0 Q 530 0 530 14 L 530 52 L 0 52 Z" fill="#1e293b" fill-opacity="0.9"/>
+            <line x1="0" y1="52" x2="530" y2="52" stroke="#db2777" stroke-width="1.5"/>
+            
+            <circle cx="20" cy="26" r="6" fill="#ec4899"/>
+            <text x="36" y="24" fill="#ec4899" font-size="13" font-weight="800" class="font-sans" letter-spacing="0.8">LANE 5: HOSTEL ADMIN &amp; OVERRIDE QUEUE</text>
+            <text x="36" y="42" fill="#94a3b8" font-size="11" class="font-sans">Key Revocation • User Provisioning • Forensics</text>
+        </g>
+        
+    <!-- Section Marker: Enrolment Phase -->
+    <g transform="translate(70, 225)">
+        <rect x="0" y="0" width="3260" height="26" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+        <text x="16" y="18" fill="#38bdf8" font-size="12" font-weight="700" class="font-sans">PHASE A — INITIAL DEVICE ENROLMENT &amp; PKI REGISTRATION (ONE-TIME PER DEVICE)</text>
+    </g>
+
+    <!-- Node S1: Student First Login -->
+    <g transform="translate(100, 270)">
+        <rect x="0" y="0" width="500" height="60" rx="30" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+        <text x="250" y="27" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle" class="font-sans">Student Authenticates with Credentials</text>
+        <text x="250" y="47" fill="#38bdf8" font-size="11" text-anchor="middle" class="font-mono">POST /api/auth/login → sentryqr_sid Cookie</text>
+    </g>
+
+    <!-- Arrow S1 -> S2 -->
+    <path d="M 350 330 L 350 365" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+    <!-- Node S2: Key Pair Generation -->
+    <g transform="translate(100, 370)">
+        <rect x="0" y="0" width="500" height="85" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="20" y="26" fill="#38bdf8" font-size="13" font-weight="700" class="font-sans">WebCrypto Key Pair Generation</text>
+        <text x="20" y="46" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#f43f5e" class="font-mono">window.crypto.subtle.generateKey()</tspan></text>
+        <text x="20" y="64" fill="#cbd5e1" font-size="11" class="font-sans">• Algorithm: <tspan fill="#a5b4fc" class="font-mono">ECDSA P-256 / SHA-256</tspan></text>
+        <rect x="300" y="38" width="180" height="32" rx="6" fill="#090d16" stroke="#f43f5e" stroke-width="1"/>
+        <text x="390" y="58" fill="#f43f5e" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">extractable: false</text>
+    </g>
+
+    <!-- Arrow S2 -> S3 -->
+    <path d="M 350 455 L 350 490" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+    <!-- Node S3: Store in IndexedDB & Export Public JWK -->
+    <g transform="translate(100, 495)">
+        <rect x="0" y="0" width="500" height="75" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="20" y="24" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">1. Save CryptoKey in IndexedDB KeyStore</text>
+        <text x="20" y="44" fill="#94a3b8" font-size="11" class="font-sans">   (Private key is hardware/browser locked; cannot be exported)</text>
+        <text x="20" y="62" fill="#38bdf8" font-size="11" font-weight="600" class="font-sans">2. Export Public JWK only (x, y coordinates)</text>
+    </g>
+
+    <!-- Arrow S3 to Backend API (Lane 3) -->
+    <path d="M 600 532 L 1320 532" stroke="#818cf8" stroke-width="2.5" marker-end="url(#arr-purple)"/>
+    <rect x="740" y="515" width="460" height="26" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="1"/>
+    <text x="970" y="532" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">POST /api/students/keys { jwk: { kty: "EC", crv: "P-256", x, y } }</text>
+
+    <!-- Node API_Key: Backend Key Registration Handler -->
+    <g transform="translate(1325, 480)">
+        <rect x="0" y="0" width="870" height="95" rx="10" fill="#111827" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="20" y="25" fill="#818cf8" font-size="13" font-weight="700" class="font-sans">Key Registration Service &amp; Safety Checks</text>
+        <text x="20" y="46" fill="#cbd5e1" font-size="11" class="font-sans">• Asserts <tspan fill="#38bdf8" class="font-mono">kty==='EC' &amp;&amp; crv==='P-256'</tspan> &amp; valid base64url coordinates</text>
+        <text x="20" y="64" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#f43f5e" font-weight="700">Strict Safety:</tspan> Rejects payload immediately if private scalar <tspan fill="#f43f5e" class="font-mono">d</tspan> is present</text>
+        <text x="20" y="82" fill="#cbd5e1" font-size="11" class="font-sans">• Computes Key Identifier <tspan fill="#a5b4fc" class="font-mono">kid = SHA256(jwk)[:16]</tspan></text>
+    </g>
+
+    <!-- Arrow API_Key -> DB Key Insert (Lane 4) -->
+    <path d="M 2195 530 L 2310 530" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arr-amber)"/>
+
+    <!-- Node DB_Key: Store Key & Invariant -->
+    <g transform="translate(2315, 470)">
+        <rect x="0" y="0" width="420" height="110" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="1.5"/>
+        <path d="M 0 8 Q 0 0 8 0 L 412 0 Q 420 0 420 8 L 420 26 L 0 26 Z" fill="#d97706" fill-opacity="0.3"/>
+        <text x="14" y="18" fill="#fbbf24" font-size="12" font-weight="700" class="font-mono">DB Transaction: public_keys</text>
+        <text x="14" y="46" fill="#cbd5e1" font-size="10.5" class="font-sans">1. Deactivates existing active key for user</text>
+        <text x="14" y="64" fill="#cbd5e1" font-size="10.5" class="font-sans">2. <tspan fill="#34d399" class="font-mono">INSERT INTO public_keys (..., active=1)</tspan></text>
+        <text x="14" y="84" fill="#38bdf8" font-size="10" font-weight="700" class="font-mono">UNIQUE INDEX: 1 active key per user</text>
+        <text x="14" y="100" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Defeats T6 (Rogue parallel keys impossible)</text>
+    </g>
+    
+    <!-- Section Marker: Challenge-Response -->
+    <g transform="translate(70, 600)">
+        <rect x="0" y="0" width="3260" height="26" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+        <text x="16" y="18" fill="#34d399" font-size="12" font-weight="700" class="font-sans">PHASE B — DYNAMIC CHALLENGE–RESPONSE GATE ENTRY PROTOCOL &amp; 10-STEP VERIFICATION</text>
+    </g>
+
+    <!-- STEP 1: CHALLENGE REQUEST -->
+    <!-- Node S4: Student App requests challenge -->
+    <g transform="translate(100, 650)">
+        <rect x="0" y="0" width="500" height="75" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+        <circle cx="24" cy="24" r="12" fill="#0284c7"/><text x="24" y="28" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">1</text>
+        <text x="46" y="28" fill="#38bdf8" font-size="13" font-weight="700" class="font-sans">Request Dynamic Challenge</text>
+        <text x="20" y="52" fill="#cbd5e1" font-size="11" class="font-sans">• Triggered automatically every 30s or on gate approach</text>
+        <text x="20" y="68" fill="#94a3b8" font-size="10.5" class="font-sans">• Sends authenticated session cookie (<tspan fill="#38bdf8" class="font-mono">sentryqr_sid</tspan>)</text>
+    </g>
+
+    <!-- Arrow S4 -> API Challenge (Lane 3) -->
+    <path d="M 600 687 L 1320 687" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+    <rect x="760" y="672" width="420" height="26" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+    <text x="970" y="689" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">POST /api/challenge (Rate limit: 20/min)</text>
+
+    <!-- Node API_Chall: Backend issues Nonce -->
+    <g transform="translate(1325, 645)">
+        <rect x="0" y="0" width="870" height="85" rx="10" fill="#111827" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="20" y="24" fill="#818cf8" font-size="13" font-weight="700" class="font-sans">Challenge Service: CSPRN Nonce Generation</text>
+        <text x="20" y="44" fill="#cbd5e1" font-size="11" class="font-sans">• Generates 32 cryptographically secure random bytes: <tspan fill="#38bdf8" class="font-mono">crypto.randomBytes(32).toString('base64url')</tspan></text>
+        <text x="20" y="62" fill="#cbd5e1" font-size="11" class="font-sans">• Sets timestamps: <tspan fill="#34d399" class="font-mono">issued_at = Date.now()</tspan>, <tspan fill="#f59e0b" class="font-mono">expires_at = issued_at + 45000 (45s TTL)</tspan></text>
+        <text x="20" y="78" fill="#a5b4fc" font-size="10.5" class="font-sans">• Builds canonical message: <tspan fill="#a5b4fc" class="font-mono">v1|&lt;studentId&gt;|&lt;nonce&gt;|&lt;issuedAt&gt;</tspan></text>
+    </g>
+
+    <!-- Arrow API_Chall -> DB Insert Nonce (Lane 4) -->
+    <path d="M 2195 687 L 2310 687" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr-amber)"/>
+
+    <!-- Node DB_Nonce: Record Nonce -->
+    <g transform="translate(2315, 645)">
+        <rect x="0" y="0" width="420" height="85" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="1.5"/>
+        <path d="M 0 8 Q 0 0 8 0 L 412 0 Q 420 0 420 8 L 420 24 L 0 24 Z" fill="#d97706" fill-opacity="0.3"/>
+        <text x="14" y="17" fill="#fbbf24" font-size="11.5" font-weight="700" class="font-mono">INSERT INTO nonces</text>
+        <text x="14" y="42" fill="#cbd5e1" font-size="10.5" class="font-sans">• <tspan fill="#34d399" class="font-mono">status = 'issued'</tspan></text>
+        <text x="14" y="60" fill="#cbd5e1" font-size="10.5" class="font-sans">• Bound to authenticated <tspan fill="#38bdf8" class="font-mono">user_id</tspan></text>
+        <text x="14" y="76" fill="#94a3b8" font-size="10" class="font-sans">• Index: <tspan class="font-mono">idx_nonces_expiry(expires_at)</tspan></text>
+    </g>
+
+    <!-- Return Arrow: API -> Student with Challenge Object -->
+    <path d="M 1320 710 L 600 710" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arr-blue)"/>
+    <text x="960" y="728" fill="#94a3b8" font-size="10" text-anchor="middle" class="font-mono">201 Created { studentId, nonce, issuedAt, expiresAt, ttlMs: 45000, message }</text>
+
+    <!-- STEP 2: SIGNING & RENDERING DYNAMIC QR -->
+    <!-- Arrow S4 -> S5 -->
+    <path d="M 350 725 L 350 765" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+    <!-- Node S5: Client Signs Nonce -->
+    <g transform="translate(100, 770)">
+        <rect x="0" y="0" width="500" height="95" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+        <circle cx="24" cy="24" r="12" fill="#0284c7"/><text x="24" y="28" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">2</text>
+        <text x="46" y="28" fill="#38bdf8" font-size="13" font-weight="700" class="font-sans">Hardware Signing &amp; QR Render</text>
+        <text x="20" y="52" fill="#cbd5e1" font-size="11" class="font-sans">• Computes ECDSA signature over canonical byte buffer</text>
+        <text x="20" y="70" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#38bdf8" class="font-mono">SubtleCrypto.sign({name:"ECDSA", hash:"SHA-256"}, key, msg)</tspan></text>
+        <text x="20" y="88" fill="#34d399" font-size="10.5" font-weight="600" class="font-sans">✓ Produces 64-byte raw IEEE-P1363 signature (<tspan fill="#a5b4fc" class="font-mono">r‖s</tspan>)</text>
+    </g>
+
+    <!-- Arrow S5 -> S6 -->
+    <path d="M 350 865 L 350 900" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+    <!-- Node S6: Dynamic QR on Screen -->
+    <g transform="translate(100, 905)">
+        <rect x="0" y="0" width="500" height="95" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="20" y="24" fill="#e2e8f0" font-size="12.5" font-weight="700" class="font-sans">Dynamic QR Code Display (45s TTL Countdown)</text>
+        <text x="20" y="44" fill="#38bdf8" font-size="10.5" class="font-mono">JSON Payload: {"v":1, "sid":2, "n":"8Kx2...",</text>
+        <text x="96" y="60" fill="#38bdf8" font-size="10.5" class="font-mono">"iat":1735689600000, "sig":"MEUC..."}</text>
+        <text x="20" y="84" fill="#34d399" font-size="10.5" font-weight="600" class="font-sans">✓ Auto-refreshes every 30s — Screenshots become stale &amp; worthless</text>
+    </g>
+
+    <!-- STEP 3: OPTICAL AIR GAP & GUARD SCAN -->
+    <!-- Arrow S6 -> Guard Scanner across the optical air gap -->
+    <path d="M 600 952 L 710 952" stroke="url(#airgap-flow)" stroke-width="4" stroke-dasharray="8,6" marker-end="url(#arr-amber)"/>
+
+    <!-- Node G1: Optical Air Gap Highlight Box -->
+    <g transform="translate(710, 890)">
+        <rect x="0" y="0" width="500" height="125" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+        <circle cx="24" cy="24" r="12" fill="#d97706"/><text x="24" y="28" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">3</text>
+        <text x="46" y="28" fill="#fbbf24" font-size="13" font-weight="800" class="font-sans">OPTICAL AIR-GAP SCAN (Camera Feed)</text>
+        <text x="20" y="52" fill="#cbd5e1" font-size="11" class="font-sans">• Guard camera captures screen pixels via <tspan fill="#34d399" class="font-mono">html5-qrcode</tspan></text>
+        <text x="20" y="70" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#34d399" font-weight="700">Zero Network Path:</tspan> No packet exists between devices</text>
+        <text x="20" y="88" fill="#34d399" font-size="10.5" font-weight="600" class="font-sans">✓ STRUCTURALLY DEFEATS T5 (MAN-IN-THE-MIDDLE)</text>
+        <text x="20" y="110" fill="#94a3b8" font-size="10" class="font-sans">Guard app parses nothing locally (Dumb terminal model)</text>
+    </g>
+
+    <!-- Arrow G1 -> G2 -->
+    <path d="M 960 1015 L 960 1055" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+
+    <!-- Node G2: Guard Relays Raw Payload -->
+    <g transform="translate(710, 1060)">
+        <rect x="0" y="0" width="500" height="75" rx="10" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+        <text x="20" y="24" fill="#34d399" font-size="12.5" font-weight="700" class="font-sans">Forward Verbatim Payload via TLS</text>
+        <text x="20" y="44" fill="#cbd5e1" font-size="11" class="font-sans">• Guard device submits raw decoded string to server</text>
+        <text x="20" y="62" fill="#94a3b8" font-size="10.5" class="font-sans">• Rate limit: 60 scans/min per guard</text>
+    </g>
+
+    <!-- Arrow G2 -> Backend Verification Engine (Lane 3) -->
+    <path d="M 1210 1097 L 1325 1097" stroke="#34d399" stroke-width="2.5" marker-end="url(#arr-green)"/>
+    <rect x="1225" y="1080" width="85" height="26" rx="4" fill="#1e293b" stroke="#34d399" stroke-width="1"/>
+    <text x="1267" y="1097" fill="#34d399" font-size="10" font-weight="700" text-anchor="middle" class="font-mono">VERIFY</text>
+
+    <!-- ==================== 10-STEP VERIFICATION ENGINE (FLOWCHART CHAIN) ==================== -->
+    <!-- Start of Step 4: Verification Pipeline -->
+    <g transform="translate(1325, 1040)">
+        <rect x="0" y="0" width="870" height="50" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+        <circle cx="24" cy="25" r="12" fill="#059669"/><text x="24" y="29" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">4</text>
+        <text x="46" y="30" fill="#34d399" font-size="14" font-weight="800" class="font-sans">10-STEP CRYPTOGRAPHIC VERIFICATION ENGINE</text>
+        <text x="850" y="30" fill="#a7f3d0" font-size="11" font-weight="700" text-anchor="end" class="font-mono">POST /api/verify</text>
+    </g>
+
+    <!-- FLOW STEP 1 & 2: SCHEMA & VERSION CHECK -->
+    <!-- Arrow into Decision 1 -->
+    <path d="M 1760 1090 L 1760 1125" stroke="#818cf8" stroke-width="2" marker-end="url(#arr-purple)"/>
+
+    <!-- Diamond 1: JSON Schema & v===1? -->
+    <g transform="translate(1760, 1175)">
+        <polygon points="0,-45 190,0 0,45 -190,0" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="0" y="-12" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">1. Valid JSON Schema &amp;</text>
+        <text x="0" y="8" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">2. Version v === 1?</text>
+        <text x="0" y="26" fill="#94a3b8" font-size="9.5" text-anchor="middle" class="font-sans">(sid, n, iat, sig types)</text>
+    </g>
+
+    <!-- Branch 1 NO -> Error -->
+    <path d="M 1950 1175 L 2100 1175" stroke="#f43f5e" stroke-width="2" marker-end="url(#arr-red)"/>
+    <text x="1980" y="1165" fill="#f43f5e" font-size="10" font-weight="700" class="font-sans">NO</text>
+    <rect x="2100" y="1155" width="90" height="40" rx="6" fill="#111827" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="2145" y="1172" fill="#f43f5e" font-size="9" font-weight="700" text-anchor="middle" class="font-mono">DENY (400/200)</text>
+    <text x="2145" y="1186" fill="#94a3b8" font-size="8" text-anchor="middle" class="font-mono">MALFORMED</text>
+
+    <!-- Branch 1 YES -> Down to DB Lookup -->
+    <path d="M 1760 1220 L 1760 1255" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+    <text x="1775" y="1242" fill="#34d399" font-size="10" font-weight="700" class="font-sans">YES</text>
+
+    <!-- Diamond 2: Nonce in DB & Status == 'issued'? -->
+    <g transform="translate(1760, 1305)">
+        <polygon points="0,-45 200,0 0,45 -200,0" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="0" y="-12" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">3. Nonce Exists &amp;</text>
+        <text x="0" y="8" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">4. Status === 'issued'?</text>
+        <text x="0" y="26" fill="#94a3b8" font-size="9.5" text-anchor="middle" class="font-sans">(Not 'consumed')</text>
+    </g>
+
+    <!-- Branch 2 NO -> Replay / Unknown Error -->
+    <path d="M 1960 1305 L 2100 1305" stroke="#f43f5e" stroke-width="2" marker-end="url(#arr-red)"/>
+    <text x="1980" y="1295" fill="#f43f5e" font-size="10" font-weight="700" class="font-sans">NO</text>
+    <rect x="2100" y="1285" width="90" height="40" rx="6" fill="#111827" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="2145" y="1302" fill="#f43f5e" font-size="9" font-weight="700" text-anchor="middle" class="font-mono">DENY 200 OK</text>
+    <text x="2145" y="1316" fill="#94a3b8" font-size="8" text-anchor="middle" class="font-mono">NONCE_REUSED</text>
+
+    <!-- Branch 2 YES -> Expiry Check -->
+    <path d="M 1760 1350 L 1760 1385" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+    <text x="1775" y="1372" fill="#34d399" font-size="10" font-weight="700" class="font-sans">YES</text>
+
+    <!-- Diamond 3: Expiry Check (now < expires_at)? -->
+    <g transform="translate(1760, 1435)">
+        <polygon points="0,-45 200,0 0,45 -200,0" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="0" y="-12" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">5. Unexpired Challenge?</text>
+        <text x="0" y="8" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">now &lt; stored.expires_at</text>
+        <text x="0" y="26" fill="#94a3b8" font-size="9.5" text-anchor="middle" class="font-sans">(45s TTL enforcement)</text>
+    </g>
+
+    <!-- Branch 3 NO -> Challenge Expired -->
+    <path d="M 1960 1435 L 2100 1435" stroke="#f43f5e" stroke-width="2" marker-end="url(#arr-red)"/>
+    <text x="1980" y="1425" fill="#f43f5e" font-size="10" font-weight="700" class="font-sans">NO</text>
+    <rect x="2100" y="1415" width="90" height="40" rx="6" fill="#111827" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="2145" y="1432" fill="#f43f5e" font-size="9" font-weight="700" text-anchor="middle" class="font-mono">DENY 200 OK</text>
+    <text x="2145" y="1446" fill="#94a3b8" font-size="8" text-anchor="middle" class="font-mono">EXPIRED</text>
+
+    <!-- Branch 3 YES -> Student Identity & Key Active Check -->
+    <path d="M 1760 1480 L 1760 1515" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+    <text x="1775" y="1502" fill="#34d399" font-size="10" font-weight="700" class="font-sans">YES</text>
+
+    <!-- Diamond 4: Student ID Match & Key Active? -->
+    <g transform="translate(1760, 1565)">
+        <polygon points="0,-45 220,0 0,45 -220,0" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="0" y="-12" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">6. stored.user_id === sid &amp;</text>
+        <text x="0" y="8" fill="#e2e8f0" font-size="11.5" font-weight="700" text-anchor="middle" class="font-sans">7-9. Active, Unrevoked Key?</text>
+        <text x="0" y="26" fill="#94a3b8" font-size="9.5" text-anchor="middle" class="font-sans">(Account active = 1)</text>
+    </g>
+
+    <!-- Branch 4 NO -> Identity Mismatch / Key Revoked -->
+    <path d="M 1980 1565 L 2100 1565" stroke="#f43f5e" stroke-width="2" marker-end="url(#arr-red)"/>
+    <text x="2000" y="1555" fill="#f43f5e" font-size="10" font-weight="700" class="font-sans">NO</text>
+    <rect x="2100" y="1545" width="90" height="40" rx="6" fill="#111827" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="2145" y="1562" fill="#f43f5e" font-size="9" font-weight="700" text-anchor="middle" class="font-mono">DENY 200 OK</text>
+    <text x="2145" y="1576" fill="#94a3b8" font-size="8" text-anchor="middle" class="font-mono">MISMATCH / REVOKED</text>
+
+    <!-- Branch 4 YES -> Canonical Rebuild & Crypto Verify -->
+    <path d="M 1760 1610 L 1760 1645" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+    <text x="1775" y="1632" fill="#34d399" font-size="10" font-weight="700" class="font-sans">YES</text>
+
+    <!-- Process Box: Rebuild Canonical Message & ECDSA Verify -->
+    <g transform="translate(1420, 1650)">
+        <rect x="0" y="0" width="680" height="85" rx="10" fill="#111827" stroke="#818cf8" stroke-width="2"/>
+        <text x="20" y="24" fill="#818cf8" font-size="12.5" font-weight="700" class="font-sans">10. Canonical Message Rebuild &amp; Mathematical Verification</text>
+        <text x="20" y="44" fill="#cbd5e1" font-size="11" class="font-sans">• Reconstructs message from <tspan fill="#38bdf8" font-weight="700">STORED ROW</tspan>: <tspan fill="#a5b4fc" class="font-mono">v1|stored.user_id|stored.nonce|stored.issued_at</tspan></text>
+        <text x="20" y="62" fill="#cbd5e1" font-size="11" class="font-sans">• Computes: <tspan fill="#34d399" class="font-mono">crypto.verify('SHA256', msg, publicJWK, sig, dsaEncoding:'ieee-p1363')</tspan></text>
+        <text x="20" y="78" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Client modifications to payload fields (sid, iat) are completely ignored (T3/T4 Defeated)</text>
+    </g>
+
+    <!-- Diamond 5: Signature Valid? -->
+    <path d="M 1760 1735 L 1760 1765" stroke="#818cf8" stroke-width="2" marker-end="url(#arr-purple)"/>
+
+    <g transform="translate(1760, 1810)">
+        <polygon points="0,-45 200,0 0,45 -200,0" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="0" y="-10" fill="#e2e8f0" font-size="12" font-weight="700" text-anchor="middle" class="font-sans">Signature Valid?</text>
+        <text x="0" y="10" fill="#34d399" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">crypto.verify === true</text>
+    </g>
+
+    <!-- Branch 5 NO -> Invalid Signature -->
+    <path d="M 1960 1810 L 2100 1810" stroke="#f43f5e" stroke-width="2" marker-end="url(#arr-red)"/>
+    <text x="1980" y="1800" fill="#f43f5e" font-size="10" font-weight="700" class="font-sans">NO</text>
+    <rect x="2100" y="1790" width="90" height="40" rx="6" fill="#111827" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="2145" y="1807" fill="#f43f5e" font-size="9" font-weight="700" text-anchor="middle" class="font-mono">DENY 200 OK</text>
+    <text x="2145" y="1821" fill="#94a3b8" font-size="8" text-anchor="middle" class="font-mono">BAD_SIG</text>
+
+    <!-- Branch 5 YES -> Step 11: Atomic Conditional DB UPDATE -->
+    <path d="M 1760 1855 L 1760 1890" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+    <text x="1775" y="1877" fill="#34d399" font-size="10" font-weight="700" class="font-sans">YES</text>
+
+    <!-- Process Box 11: Atomic Conditional Update -->
+    <g transform="translate(1380, 1895)">
+        <rect x="0" y="0" width="760" height="90" rx="10" fill="#042f2e" stroke="#14b8a6" stroke-width="2"/>
+        <circle cx="24" cy="24" r="12" fill="#0d9488"/><text x="24" y="28" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">11</text>
+        <text x="46" y="28" fill="#2dd4bf" font-size="13" font-weight="700" class="font-sans">Atomic Conditional Nonce State Transition</text>
+        <text x="20" y="52" fill="#ccfbf1" font-size="11.5" class="font-mono">UPDATE nonces SET status='consumed', consumed_at=? WHERE nonce=? AND status='issued'</text>
+        <text x="20" y="74" fill="#99f6e4" font-size="11" font-weight="600" class="font-sans">Critical Lock: Execution must yield <tspan fill="#ffffff" class="font-mono">changes === 1</tspan>. Prevents concurrent verification race conditions</text>
+    </g>
+
+    <!-- Diamond 6: Affected Rows === 1? -->
+    <path d="M 1760 1985 L 1760 2015" stroke="#14b8a6" stroke-width="2" marker-end="url(#arr-green)"/>
+
+    <g transform="translate(1760, 2060)">
+        <polygon points="0,-45 200,0 0,45 -200,0" fill="#042f2e" stroke="#14b8a6" stroke-width="2"/>
+        <text x="0" y="-10" fill="#ffffff" font-size="12" font-weight="800" text-anchor="middle" class="font-sans">Atomic Update Succeeded?</text>
+        <text x="0" y="12" fill="#5eead4" font-size="11.5" font-weight="700" text-anchor="middle" class="font-mono">db.changes === 1</text>
+    </g>
+
+    <!-- Branch 6 NO -> Concurrent Race Lost -->
+    <path d="M 1960 2060 L 2100 2060" stroke="#f43f5e" stroke-width="2" marker-end="url(#arr-red)"/>
+    <text x="1980" y="2050" fill="#f43f5e" font-size="10" font-weight="700" class="font-sans">NO</text>
+    <rect x="2100" y="2040" width="90" height="40" rx="6" fill="#111827" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="2145" y="2057" fill="#f43f5e" font-size="9" font-weight="700" text-anchor="middle" class="font-mono">DENY 200 OK</text>
+    <text x="2145" y="2071" fill="#94a3b8" font-size="8" text-anchor="middle" class="font-mono">RACE_LOST</text>
+
+    <!-- Branch 6 YES -> SUCCESS GRANT! -->
+    <path d="M 1760 2105 L 1760 2145" stroke="#34d399" stroke-width="3" marker-end="url(#arr-green)"/>
+    <text x="1775" y="2130" fill="#34d399" font-size="11" font-weight="800" class="font-sans">YES</text>
+
+    <!-- GRANT TERMINAL BADGE -->
+    <g transform="translate(1420, 2150)">
+        <rect x="0" y="0" width="680" height="95" rx="14" fill="#064e3b" stroke="#34d399" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="340" y="32" fill="#34d399" font-size="17" font-weight="800" text-anchor="middle" class="font-sans" letter-spacing="1">✓ GRANT (200 OK) — ENTRY AUTHORIZED</text>
+        <text x="340" y="56" fill="#a7f3d0" font-size="11.5" text-anchor="middle" class="font-sans">Payload: { decision: "GRANT", reasonCode: "OK", student: { fullName, rollNo, roomNo } }</text>
+        <text x="340" y="78" fill="#d1fae5" font-size="11" font-weight="600" text-anchor="middle" class="font-mono">Writes to: entry_events (GRANT) &amp; audit_logs (VERIFY)</text>
+    </g>
+
+    <!-- Relay Grant to Guard Screen (Lane 2) -->
+    <path d="M 1420 2200 L 960 2200 L 960 2240" stroke="#34d399" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arr-green)"/>
+    
+    <!-- Guard Decision Display -->
+    <g transform="translate(710, 2245)">
+        <rect x="0" y="0" width="500" height="80" rx="10" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+        <text x="250" y="30" fill="#34d399" font-size="14" font-weight="800" text-anchor="middle" class="font-sans">GUARD HUD: GREEN GRANT BANNER</text>
+        <text x="250" y="52" fill="#a7f3d0" font-size="11" text-anchor="middle" class="font-sans">Displays Student Name, Roll No &amp; Room No on screen</text>
+        <text x="250" y="68" fill="#6ee7b7" font-size="10" text-anchor="middle" class="font-mono">Audio chime played • Turnstile Gate Opens</text>
+    </g>
+
+    <!-- ==================== LANE 4: DATABASE SCHEMA & WRITES ==================== -->
+    <g transform="translate(2315, 800)">
+        <rect x="0" y="0" width="420" height="720" rx="12" fill="#111827" stroke="#f59e0b" stroke-width="1.5"/>
+        <path d="M 0 12 Q 0 0 12 0 L 408 0 Q 420 0 420 12 L 420 36 L 0 36 Z" fill="#d97706" fill-opacity="0.3"/>
+        <text x="14" y="24" fill="#fbbf24" font-size="13" font-weight="700" class="font-sans">DATABASE SCHEMA &amp; STATE LEDGER</text>
+
+        <!-- Table 1: nonces -->
+        <g transform="translate(14, 48)">
+            <rect x="0" y="0" width="392" height="115" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="10" y="20" fill="#34d399" font-size="11" font-weight="700" class="font-mono">nonces (Anti-Replay Table)</text>
+            <text x="10" y="38" fill="#f43f5e" font-size="10" class="font-mono">🔑 nonce (TEXT PK 32B)</text>
+            <text x="10" y="54" fill="#cbd5e1" font-size="10" class="font-mono">• user_id (FK), issued_at, expires_at</text>
+            <text x="10" y="70" fill="#34d399" font-size="10" font-weight="700" class="font-mono">• status (issued → consumed)</text>
+            <text x="10" y="86" fill="#cbd5e1" font-size="10" class="font-mono">• consumed_at (INTEGER)</text>
+            <text x="10" y="104" fill="#94a3b8" font-size="9" class="font-sans">Index: idx_nonces_expiry(expires_at)</text>
+        </g>
+
+        <!-- Table 2: public_keys -->
+        <g transform="translate(14, 175)">
+            <rect x="0" y="0" width="392" height="115" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="10" y="20" fill="#818cf8" font-size="11" font-weight="700" class="font-mono">public_keys (PKI Registry)</text>
+            <text x="10" y="38" fill="#f43f5e" font-size="10" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="10" y="54" fill="#cbd5e1" font-size="10" class="font-mono">• user_id (FK), kid, jwk, algorithm</text>
+            <text x="10" y="70" fill="#a5b4fc" font-size="10" font-weight="700" class="font-mono">• active (INTEGER 0/1)</text>
+            <text x="10" y="86" fill="#cbd5e1" font-size="10" class="font-mono">• revoked_at (INTEGER)</text>
+            <text x="10" y="104" fill="#34d399" font-size="9" font-weight="600" class="font-sans">UNIQUE INDEX WHERE active=1</text>
+        </g>
+
+        <!-- Table 3: entry_events -->
+        <g transform="translate(14, 302)">
+            <rect x="0" y="0" width="392" height="115" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="10" y="20" fill="#38bdf8" font-size="11" font-weight="700" class="font-mono">entry_events (Gate Log)</text>
+            <text x="10" y="38" fill="#f43f5e" font-size="10" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="10" y="54" fill="#cbd5e1" font-size="10" class="font-mono">• user_id (FK), guard_user_id (FK)</text>
+            <text x="10" y="70" fill="#38bdf8" font-size="10" font-weight="700" class="font-mono">• decision (GRANT | DENY)</text>
+            <text x="10" y="86" fill="#cbd5e1" font-size="10" class="font-mono">• reason_code, nonce, created_at</text>
+            <text x="10" y="104" fill="#94a3b8" font-size="9" class="font-sans">Permanent, immutable operational log</text>
+        </g>
+
+        <!-- Table 4: audit_logs -->
+        <g transform="translate(14, 429)">
+            <rect x="0" y="0" width="392" height="125" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="10" y="20" fill="#ec4899" font-size="11" font-weight="700" class="font-mono">audit_logs (Forensic Ledger)</text>
+            <text x="10" y="38" fill="#f43f5e" font-size="10" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="10" y="54" fill="#cbd5e1" font-size="10" class="font-mono">• ts, event_type (VERIFY, LOGIN...)</text>
+            <text x="10" y="70" fill="#cbd5e1" font-size="10" class="font-mono">• actor_user_id, subject_user_id</text>
+            <text x="10" y="86" fill="#cbd5e1" font-size="10" class="font-mono">• decision, reason_code, detail (JSON), ip</text>
+            <text x="10" y="108" fill="#34d399" font-size="9" font-weight="600" class="font-sans">✓ Full non-repudiation forensic proof</text>
+        </g>
+
+        <!-- Table 5: override_requests -->
+        <g transform="translate(14, 566)">
+            <rect x="0" y="0" width="392" height="135" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="10" y="20" fill="#fbbf24" font-size="11" font-weight="700" class="font-mono">override_requests (Exceptions)</text>
+            <text x="10" y="38" fill="#f43f5e" font-size="10" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="10" y="54" fill="#cbd5e1" font-size="10" class="font-mono">• guard_user_id (FK), student_user_id (FK)</text>
+            <text x="10" y="70" fill="#cbd5e1" font-size="10" class="font-mono">• reason (TEXT), status (pending/approved)</text>
+            <text x="10" y="86" fill="#cbd5e1" font-size="10" class="font-mono">• decided_by (FK admin), decision_note</text>
+            <text x="10" y="112" fill="#38bdf8" font-size="9" class="font-sans">Approvals auto-write to entry_events</text>
+        </g>
+    </g>
+
+    <!-- Connectors from Verification to Database tables -->
+    <path d="M 2100 2190 L 2315 1150" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
+    <path d="M 2100 2210 L 2315 1280" stroke="#ec4899" stroke-width="2" stroke-dasharray="4,4"/>
+
+    <!-- ==================== LANE 5: ADMIN & MANUAL OVERRIDE FLOW ==================== -->
+    <g transform="translate(2835, 650)">
+        <rect x="0" y="0" width="480" height="870" rx="12" fill="#111827" stroke="#ec4899" stroke-width="1.5"/>
+        <path d="M 0 12 Q 0 0 12 0 L 468 0 Q 480 0 480 12 L 480 36 L 0 36 Z" fill="#db2777" fill-opacity="0.3"/>
+        <text x="14" y="24" fill="#f472b6" font-size="13" font-weight="700" class="font-sans">ADMIN DASHBOARD &amp; EXCEPTION FLOWS</text>
+
+        <!-- Admin Flow 1: Key Revocation -->
+        <g transform="translate(14, 50)">
+            <rect x="0" y="0" width="452" height="150" rx="8" fill="#1e293b" stroke="#db2777" stroke-width="1"/>
+            <text x="12" y="22" fill="#f472b6" font-size="12" font-weight="700" class="font-sans">Public Key Revocation (Threat T6 Defense)</text>
+            <text x="12" y="44" fill="#cbd5e1" font-size="11" class="font-sans">• Admin calls: <tspan fill="#f43f5e" class="font-mono">POST /api/admin/keys/:id/revoke</tspan></text>
+            <text x="12" y="62" fill="#cbd5e1" font-size="11" class="font-sans">• Soft-deactivates key: <tspan fill="#f43f5e" class="font-mono">active=0, revoked_at=now</tspan></text>
+            <text x="12" y="80" fill="#cbd5e1" font-size="11" class="font-sans">• Row retained for historical verification audits</text>
+            <text x="12" y="98" fill="#34d399" font-size="10.5" font-weight="600" class="font-sans">✓ Immediate Gate Enforcement: Next scan fails Step 9</text>
+            <text x="12" y="116" fill="#94a3b8" font-size="10" class="font-sans">• Audit log entry: <tspan fill="#f472b6" class="font-mono">KEY_REVOKED</tspan></text>
+            <text x="12" y="134" fill="#64748b" font-size="9.5" class="font-sans">Student must re-enrol new device with credentials</text>
+        </g>
+
+        <!-- Admin Flow 2: Manual Override Workflow -->
+        <g transform="translate(14, 215)">
+            <rect x="0" y="0" width="452" height="235" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+            <text x="12" y="22" fill="#fbbf24" font-size="12" font-weight="700" class="font-sans">Manual Override Exception Pipeline</text>
+            <text x="12" y="44" fill="#94a3b8" font-size="10.5" class="font-sans">Case: Student phone battery dead / camera damaged</text>
+            
+            <rect x="12" y="55" width="428" height="50" rx="4" fill="#090d16" stroke="#334155" stroke-width="1"/>
+            <text x="20" y="72" fill="#fbbf24" font-size="10.5" font-weight="700" class="font-sans">Step 1: Guard raises exception</text>
+            <text x="20" y="90" fill="#cbd5e1" font-size="10" class="font-mono">POST /api/overrides { rollNo, reason }</text>
+
+            <rect x="12" y="115" width="428" height="50" rx="4" fill="#090d16" stroke="#334155" stroke-width="1"/>
+            <text x="20" y="132" fill="#a5b4fc" font-size="10.5" font-weight="700" class="font-sans">Step 2: Admin reviews pending queue</text>
+            <text x="20" y="150" fill="#cbd5e1" font-size="10" class="font-mono">GET /api/overrides?status=pending</text>
+
+            <rect x="12" y="175" width="428" height="50" rx="4" fill="#090d16" stroke="#059669" stroke-width="1"/>
+            <text x="20" y="192" fill="#34d399" font-size="10.5" font-weight="700" class="font-sans">Step 3: Warden approval / denial</text>
+            <text x="20" y="210" fill="#cbd5e1" font-size="10" class="font-mono">POST /api/overrides/:id/decision { approve: true }</text>
+        </g>
+
+        <!-- Admin Flow 3: Forensic Audit Log Inspector -->
+        <g transform="translate(14, 465)">
+            <rect x="0" y="0" width="452" height="190" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+            <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="700" class="font-sans">Real-Time Forensic Audit Inspector</text>
+            <text x="12" y="44" fill="#cbd5e1" font-size="11" class="font-sans">• Endpoint: <tspan fill="#38bdf8" class="font-mono">GET /api/admin/audit</tspan></text>
+            <text x="12" y="62" fill="#cbd5e1" font-size="11" class="font-sans">• Filterable parameters:</text>
+            <text x="24" y="80" fill="#94a3b8" font-size="10.5" class="font-mono">- eventType: VERIFY, LOGIN, KEY_REVOKED</text>
+            <text x="24" y="96" fill="#94a3b8" font-size="10.5" class="font-mono">- decision: GRANT | DENY</text>
+            <text x="24" y="112" fill="#94a3b8" font-size="10.5" class="font-mono">- actorUserId, subjectUserId, dateRange</text>
+            <text x="12" y="136" fill="#34d399" font-size="10.5" font-weight="600" class="font-sans">✓ Cryptographic Audit Non-Repudiation</text>
+            <text x="12" y="154" fill="#cbd5e1" font-size="10" class="font-sans">Neither student nor warden can fabricate entry records</text>
+            <text x="12" y="172" fill="#64748b" font-size="9.5" class="font-sans">All failures logged with precise machine reason codes</text>
+        </g>
+
+        <!-- Admin Flow 4: User Provisioning -->
+        <g transform="translate(14, 670)">
+            <rect x="0" y="0" width="452" height="180" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="12" y="22" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Account Provisioning &amp; Suspension</text>
+            <text x="12" y="44" fill="#cbd5e1" font-size="11" class="font-sans">• Create Student / Guard: <tspan fill="#38bdf8" class="font-mono">POST /api/admin/users</tspan></text>
+            <text x="12" y="62" fill="#cbd5e1" font-size="11" class="font-sans">• Password hashed with scrypt + 16B random salt</text>
+            <text x="12" y="80" fill="#cbd5e1" font-size="11" class="font-sans">• Suspend Account: <tspan fill="#f43f5e" class="font-mono">PATCH /api/admin/users/:id { active: 0 }</tspan></text>
+            <text x="12" y="100" fill="#f87171" font-size="10.5" font-weight="600" class="font-sans">✓ Immediate Gate Invalidation: Rejects with STUDENT_INACTIVE</text>
+            <text x="12" y="120" fill="#94a3b8" font-size="10" class="font-sans">Profile data linked via foreign keys to hostel records</text>
+        </g>
+    </g>
+    </svg>

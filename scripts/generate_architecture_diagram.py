@@ -1,0 +1,866 @@
+import os
+import subprocess
+from PIL import Image
+
+def build_architecture_svg():
+    width = 2800
+    height = 2050
+    
+    svg = []
+    svg.append(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}">
+    <defs>
+        <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#090d16"/>
+            <stop offset="50%" stop-color="#0f172a"/>
+            <stop offset="100%" stop-color="#090d16"/>
+        </linearGradient>
+
+        <linearGradient id="header-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="50%" stop-color="#818cf8"/>
+            <stop offset="100%" stop-color="#c084fc"/>
+        </linearGradient>
+
+        <linearGradient id="card-grad-1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1e293b"/>
+            <stop offset="100%" stop-color="#0f172a"/>
+        </linearGradient>
+
+        <linearGradient id="accent-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0284c7"/>
+            <stop offset="100%" stop-color="#0369a1"/>
+        </linearGradient>
+
+        <linearGradient id="accent-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#059669"/>
+            <stop offset="100%" stop-color="#047857"/>
+        </linearGradient>
+
+        <linearGradient id="accent-indigo" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#4f46e5"/>
+        </linearGradient>
+
+        <linearGradient id="accent-amber" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#d97706"/>
+            <stop offset="100%" stop-color="#b45309"/>
+        </linearGradient>
+
+        <linearGradient id="accent-rose" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e11d48"/>
+            <stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
+
+        <linearGradient id="airgap-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="50%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#10b981"/>
+        </linearGradient>
+
+        <filter id="drop-shadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+        </filter>
+
+        <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+
+        <style>
+            .font-mono {{ font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }}
+            .font-sans {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }}
+        </style>
+    </defs>
+
+    <!-- Background -->
+    <rect width="{width}" height="{height}" fill="url(#bg-grad)"/>
+
+    <!-- Subtle Background Grid -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.75" stroke-opacity="0.4"/>
+    </pattern>
+    <rect width="{width}" height="{height}" fill="url(#grid)" />
+''')
+
+    # Header
+    svg.append('''
+    <!-- ==================== HEADER ==================== -->
+    <g transform="translate(60, 45)">
+        <!-- Title Badge -->
+        <rect x="0" y="0" width="160" height="28" rx="14" fill="#0369a1" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="80" y="18" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle" class="font-sans" letter-spacing="1.5">COURSE PBL 22CSE71</text>
+        
+        <!-- Main Title -->
+        <text x="0" y="68" fill="url(#header-grad)" font-size="38" font-weight="800" class="font-sans" letter-spacing="-0.5">SentryQR — System Architecture &amp; Cryptographic Flow</text>
+        
+        <!-- Subtitle -->
+        <text x="0" y="98" fill="#94a3b8" font-size="16" font-weight="400" class="font-sans">
+            Cryptographically Secure, Dynamic Challenge-Response Hostel Access Control • St. Joseph Engineering College, Mangaluru
+        </text>
+
+        <!-- Header Badges (Right side) -->
+        <g transform="translate(1820, 10)">
+            <!-- Badge 1: ECDSA P-256 -->
+            <rect x="0" y="0" width="240" height="36" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+            <circle cx="18" cy="18" r="6" fill="#818cf8"/>
+            <text x="32" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">ECDSA P-256 (WebCrypto)</text>
+
+            <!-- Badge 2: Anti-Replay Nonce -->
+            <rect x="255" y="0" width="230" height="36" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+            <circle cx="273" cy="18" r="6" fill="#34d399"/>
+            <text x="287" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">Single-Use Nonces (45s TTL)</text>
+
+            <!-- Badge 3: Optical Air-Gap -->
+            <rect x="500" y="0" width="220" height="36" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="518" cy="18" r="6" fill="#f59e0b"/>
+            <text x="532" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">Air-Gapped Optical Hop</text>
+
+            <!-- Badge 4: SQLite WAL -->
+            <rect x="735" y="0" width="125" height="36" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+            <circle cx="753" cy="18" r="6" fill="#38bdf8"/>
+            <text x="767" y="23" fill="#e2e8f0" font-size="13" font-weight="600" class="font-sans">SQLite WAL</text>
+        </g>
+    </g>
+    ''')
+
+    # SECTION 1: CLIENT TIER (Top Left & Center-Left)
+    svg.append('''
+    <!-- ==================== TIER 1: CLIENT TIER (DEVICES & BROWSERS) ==================== -->
+    <g transform="translate(60, 165)">
+        <!-- Section Container -->
+        <rect x="0" y="0" width="1340" height="490" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="#334155" stroke-width="1.5" filter="url(#drop-shadow)"/>
+        
+        <!-- Section Header -->
+        <path d="M 0 16 Q 0 0 16 0 L 1324 0 Q 1340 0 1340 16 L 1340 46 L 0 46 Z" fill="#1e293b" fill-opacity="0.7"/>
+        <text x="24" y="30" fill="#38bdf8" font-size="15" font-weight="700" class="font-sans" letter-spacing="1">1. CLIENT TIER (DISTRIBUTED ACTORS &amp; CRYPTOGRAPHIC ENCLAVES)</text>
+        <text x="1316" y="30" fill="#64748b" font-size="12" font-weight="600" text-anchor="end" class="font-sans">React 18 + Vite SPA Client Applications</text>
+
+        <!-- 1A: Student Device -->
+        <g transform="translate(24, 65)">
+            <rect x="0" y="0" width="410" height="400" rx="12" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+            <path d="M 0 12 Q 0 0 12 0 L 398 0 Q 410 0 410 12 L 410 38 L 0 38 Z" fill="#0284c7" fill-opacity="0.25"/>
+            <text x="16" y="25" fill="#38bdf8" font-size="14" font-weight="700" class="font-sans">STUDENT DEVICE (Mobile Web)</text>
+            <rect x="310" y="8" width="85" height="22" rx="6" fill="#0369a1" fill-opacity="0.5"/>
+            <text x="352" y="23" fill="#bae6fd" font-size="10" font-weight="600" text-anchor="middle" class="font-sans">SEMI-TRUSTED</text>
+
+            <!-- Inner box 1: WebCrypto Non-Extractable Key -->
+            <rect x="16" y="52" width="378" height="100" rx="8" fill="#1e293b" stroke="#0284c7" stroke-width="1"/>
+            <text x="28" y="74" fill="#38bdf8" font-size="12" font-weight="700" class="font-sans">WebCrypto API (SubtleCrypto)</text>
+            <text x="28" y="93" fill="#94a3b8" font-size="11" class="font-sans">• KeyGen: ECDSA P-256 / SHA-256</text>
+            <rect x="28" y="102" width="354" height="26" rx="4" fill="#090d16"/>
+            <text x="36" y="119" fill="#f43f5e" font-size="11" font-weight="700" class="font-mono">extractable: false</text>
+            <text x="175" y="119" fill="#94a3b8" font-size="10" class="font-sans">(Hardware/Browser Locked)</text>
+            <text x="28" y="142" fill="#64748b" font-size="10" class="font-sans">• Stored in IndexedDB KeyStore — Private key never leaves</text>
+
+            <!-- Inner box 2: Dynamic QR Generator -->
+            <rect x="16" y="162" width="378" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="28" y="184" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Dynamic QR Engine (qrcode canvas)</text>
+            <text x="28" y="202" fill="#94a3b8" font-size="11" class="font-sans">• Challenge Request: 30s auto-refresh interval</text>
+            <text x="28" y="220" fill="#94a3b8" font-size="11" class="font-sans">• Signs canonical string: <tspan fill="#38bdf8" class="font-mono">v1|sid|nonce|iat</tspan></text>
+            <text x="28" y="238" fill="#94a3b8" font-size="11" class="font-sans">• Generates raw 64B IEEE-P1363 signature (<tspan fill="#a78bfa" class="font-mono">r‖s</tspan>)</text>
+            <text x="28" y="256" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Defeats T2 (Sharing) &amp; T1 (Screenshot Expiry)</text>
+
+            <!-- Student Payload Structure Preview -->
+            <rect x="16" y="282" width="378" height="104" rx="8" fill="#0b0f19" stroke="#1e293b" stroke-width="1"/>
+            <text x="28" y="302" fill="#e2e8f0" font-size="11" font-weight="700" class="font-sans">QR Payload Structure (Version 9, ~250B JSON):</text>
+            <text x="28" y="322" fill="#38bdf8" font-size="10" class="font-mono">{"v": 1, "sid": 2, "n": "8Kx2...",</text>
+            <text x="35" y="338" fill="#38bdf8" font-size="10" class="font-mono"> "iat": 1735689600000, "sig": "MEUC..."}</text>
+            <text x="28" y="358" fill="#94a3b8" font-size="10" class="font-sans">• Endpoints: <tspan fill="#cbd5e1" class="font-mono">POST /api/challenge, POST /api/students/keys</tspan></text>
+            <text x="28" y="374" fill="#94a3b8" font-size="10" class="font-sans">• Views: Dynamic QR, Entry History, Enrolment Wizard</text>
+        </g>
+
+        <!-- 1B: Guard Device -->
+        <g transform="translate(460, 65)">
+            <rect x="0" y="0" width="410" height="400" rx="12" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+            <path d="M 0 12 Q 0 0 12 0 L 398 0 Q 410 0 410 12 L 410 38 L 0 38 Z" fill="#059669" fill-opacity="0.25"/>
+            <text x="16" y="25" fill="#34d399" font-size="14" font-weight="700" class="font-sans">GUARD SCANNER (Tablet / Phone)</text>
+            <rect x="310" y="8" width="85" height="22" rx="6" fill="#047857" fill-opacity="0.5"/>
+            <text x="352" y="23" fill="#a7f3d0" font-size="10" font-weight="600" text-anchor="middle" class="font-sans">SEMI-TRUSTED</text>
+
+            <!-- Inner box 1: Camera Scanner -->
+            <rect x="16" y="52" width="378" height="90" rx="8" fill="#1e293b" stroke="#059669" stroke-width="1"/>
+            <text x="28" y="74" fill="#34d399" font-size="12" font-weight="700" class="font-sans">Optical Scanner (html5-qrcode)</text>
+            <text x="28" y="93" fill="#94a3b8" font-size="11" class="font-sans">• Captures live video stream via <tspan fill="#cbd5e1" class="font-mono">getUserMedia</tspan></text>
+            <text x="28" y="111" fill="#94a3b8" font-size="11" class="font-sans">• Real-time optical barcode matrix decoding</text>
+            <text x="28" y="129" fill="#94a3b8" font-size="11" class="font-sans">• Decodes raw QR text payload without local mutation</text>
+
+            <!-- Inner box 2: Dumb Terminal Concept -->
+            <rect x="16" y="152" width="378" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="28" y="174" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Zero-Authority Dumb Client Model</text>
+            <text x="28" y="193" fill="#f87171" font-size="11" font-weight="600" class="font-sans">⚠️ Client Verifies NOTHING Locally</text>
+            <text x="28" y="211" fill="#94a3b8" font-size="11" class="font-sans">• Passes raw payload verbatim to <tspan fill="#cbd5e1" class="font-mono">POST /api/verify</tspan></text>
+            <text x="28" y="229" fill="#94a3b8" font-size="11" class="font-sans">• Displays Server Decision: <tspan fill="#34d399" font-weight="700">GRANT</tspan> or <tspan fill="#f43f5e" font-weight="700">DENY</tspan></text>
+            <text x="28" y="247" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Defeats T9 (Compromised Guard Device)</text>
+
+            <!-- Inner box 3: HUD & Manual Override -->
+            <rect x="16" y="272" width="378" height="114" rx="8" fill="#0b0f19" stroke="#1e293b" stroke-width="1"/>
+            <text x="28" y="292" fill="#e2e8f0" font-size="11" font-weight="700" class="font-sans">Decision HUD &amp; Fallback Workflows:</text>
+            <text x="28" y="310" fill="#94a3b8" font-size="11" class="font-sans">• Audio-Visual Feedback (Beep + Green/Red Banner)</text>
+            <text x="28" y="328" fill="#94a3b8" font-size="11" class="font-sans">• Displays Student Name, Roll No, Room No on GRANT</text>
+            <text x="28" y="346" fill="#f59e0b" font-size="11" font-weight="600" class="font-sans">• Manual Override Workflow: <tspan fill="#cbd5e1" class="font-mono">POST /api/overrides</tspan></text>
+            <text x="28" y="364" fill="#64748b" font-size="10" class="font-sans">  (Dead battery escalation with reason &amp; photo verification)</text>
+        </g>
+
+        <!-- 1C: Admin Workstation -->
+        <g transform="translate(896, 65)">
+            <rect x="0" y="0" width="418" height="400" rx="12" fill="#111827" stroke="#818cf8" stroke-width="1.5"/>
+            <path d="M 0 12 Q 0 0 12 0 L 406 0 Q 418 0 418 12 L 418 38 L 0 38 Z" fill="#4f46e5" fill-opacity="0.25"/>
+            <text x="16" y="25" fill="#818cf8" font-size="14" font-weight="700" class="font-sans">HOSTEL ADMIN WORKSTATION</text>
+            <rect x="325" y="8" width="78" height="22" rx="6" fill="#4338ca" fill-opacity="0.5"/>
+            <text x="364" y="23" fill="#c7d2fe" font-size="10" font-weight="600" text-anchor="middle" class="font-sans">TRUSTED</text>
+
+            <!-- Admin Module 1: Student & Key Management -->
+            <rect x="16" y="52" width="386" height="95" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+            <text x="28" y="74" fill="#a5b4fc" font-size="12" font-weight="700" class="font-sans">Student Lifecycle &amp; Key Registry</text>
+            <text x="28" y="93" fill="#94a3b8" font-size="11" class="font-sans">• Student Provisioning: <tspan fill="#cbd5e1" class="font-mono">POST /api/admin/users</tspan></text>
+            <text x="28" y="111" fill="#94a3b8" font-size="11" class="font-sans">• Account Deactivation: <tspan fill="#cbd5e1" class="font-mono">PATCH /api/admin/users/:id</tspan></text>
+            <text x="28" y="129" fill="#94a3b8" font-size="11" class="font-sans">• Public Key Revocation: <tspan fill="#f43f5e" class="font-mono">POST /api/admin/keys/:id/revoke</tspan></text>
+
+            <!-- Admin Module 2: Override Approval Queue -->
+            <rect x="16" y="157" width="386" height="85" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="28" y="179" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Manual Override Decision Queue</text>
+            <text x="28" y="198" fill="#94a3b8" font-size="11" class="font-sans">• Live Pending Queue: <tspan fill="#cbd5e1" class="font-mono">GET /api/overrides?status=pending</tspan></text>
+            <text x="28" y="216" fill="#94a3b8" font-size="11" class="font-sans">• Warden Decision: <tspan fill="#cbd5e1" class="font-mono">POST /api/overrides/:id/decision</tspan></text>
+            <text x="28" y="232" fill="#34d399" font-size="10" class="font-sans">✓ Approvals auto-injected into immutable entry event log</text>
+
+            <!-- Admin Module 3: Security & Audit Inspector -->
+            <rect x="16" y="252" width="386" height="134" rx="8" fill="#0b0f19" stroke="#1e293b" stroke-width="1"/>
+            <text x="28" y="272" fill="#e2e8f0" font-size="11" font-weight="700" class="font-sans">Forensic Security &amp; Audit Inspector:</text>
+            <text x="28" y="291" fill="#94a3b8" font-size="11" class="font-sans">• Full Audit Log Viewer: <tspan fill="#cbd5e1" class="font-mono">GET /api/admin/audit</tspan></text>
+            <text x="28" y="309" fill="#94a3b8" font-size="11" class="font-sans">• Operational Gate Records: <tspan fill="#cbd5e1" class="font-mono">GET /api/admin/entries</tspan></text>
+            <text x="28" y="327" fill="#94a3b8" font-size="11" class="font-sans">• Filter by Event Type, Decision (GRANT/DENY), Actor, IP</text>
+            <text x="28" y="345" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Non-Repudiation: Every signature audit-bound</text>
+            <text x="28" y="361" fill="#64748b" font-size="10" class="font-sans">• Real-time WebSocket / polling security notifications</text>
+        </g>
+    </g>
+    ''')
+
+    # SECTION 2: OPTICAL AIR GAP & TRANSPORT LAYER (Top Right)
+    svg.append('''
+    <!-- ==================== TIER 2: OPTICAL AIR GAP & NETWORK TRANSPORT ==================== -->
+    <g transform="translate(1420, 165)">
+        <rect x="0" y="0" width="1320" height="490" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="#334155" stroke-width="1.5" filter="url(#drop-shadow)"/>
+        
+        <!-- Section Header -->
+        <path d="M 0 16 Q 0 0 16 0 L 1304 0 Q 1320 0 1320 16 L 1320 46 L 0 46 Z" fill="#1e293b" fill-opacity="0.7"/>
+        <text x="24" y="30" fill="#f59e0b" font-size="15" font-weight="700" class="font-sans" letter-spacing="1">2. DATA TRANSPORT, AIR-GAP CHANNEL &amp; AUTHENTICATION FLOW</text>
+        <text x="1296" y="30" fill="#64748b" font-size="12" font-weight="600" text-anchor="end" class="font-sans">Zero Network Path between Student &amp; Guard</text>
+
+        <!-- Air-Gap Hop Card -->
+        <g transform="translate(24, 65)">
+            <rect x="0" y="0" width="1272" height="150" rx="12" fill="#111827" stroke="url(#airgap-grad)" stroke-width="2"/>
+            
+            <g transform="translate(20, 20)">
+                <rect x="0" y="0" width="220" height="110" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+                <text x="110" y="32" fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle" class="font-sans">Student Screen</text>
+                <text x="110" y="55" fill="#94a3b8" font-size="11" text-anchor="middle" class="font-sans">Dynamic QR Code</text>
+                <rect x="35" y="65" width="150" height="30" rx="4" fill="#090d16" stroke="#0284c7" stroke-width="1"/>
+                <text x="110" y="84" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">Auto-Refresh (30s)</text>
+            </g>
+
+            <!-- Air-Gap Arrow & Details -->
+            <g transform="translate(260, 20)">
+                <line x1="0" y1="55" x2="380" y2="55" stroke="url(#airgap-grad)" stroke-width="4" stroke-dasharray="8,6"/>
+                <polygon points="390,55 375,47 375,63" fill="#f59e0b"/>
+                
+                <rect x="50" y="8" width="290" height="38" rx="19" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="195" y="27" fill="#fbbf24" font-size="12" font-weight="800" text-anchor="middle" class="font-sans" letter-spacing="1">OPTICAL AIR GAP (No Network Hop)</text>
+                <text x="195" y="39" fill="#94a3b8" font-size="9.5" text-anchor="middle" class="font-sans">Camera reading OLED/LCD pixels</text>
+
+                <text x="195" y="80" fill="#34d399" font-size="11" font-weight="700" text-anchor="middle" class="font-sans">✓ STRUCTURALLY DEFEATS T5 (MAN-IN-THE-MIDDLE)</text>
+                <text x="195" y="98" fill="#94a3b8" font-size="10.5" text-anchor="middle" class="font-sans">No Wi-Fi/Bluetooth packet to intercept • Raw optical photon transfer</text>
+            </g>
+
+            <g transform="translate(680, 20)">
+                <rect x="0" y="0" width="220" height="110" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+                <text x="110" y="32" fill="#34d399" font-size="13" font-weight="700" text-anchor="middle" class="font-sans">Guard Camera</text>
+                <text x="110" y="55" fill="#94a3b8" font-size="11" text-anchor="middle" class="font-sans">html5-qrcode Scanner</text>
+                <rect x="35" y="65" width="150" height="30" rx="4" fill="#090d16" stroke="#059669" stroke-width="1"/>
+                <text x="110" y="84" fill="#34d399" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">Verbatim Decode</text>
+            </g>
+
+            <!-- Network hop to backend -->
+            <g transform="translate(920, 20)">
+                <line x1="0" y1="55" x2="310" y2="55" stroke="#34d399" stroke-width="3"/>
+                <polygon points="320,55 305,48 305,62" fill="#34d399"/>
+                
+                <rect x="30" y="15" width="260" height="30" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1"/>
+                <text x="160" y="34" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle" class="font-mono">POST /api/verify</text>
+                <text x="160" y="80" fill="#94a3b8" font-size="10.5" text-anchor="middle" class="font-sans">TLS / HTTPS Secure Channel</text>
+                <text x="160" y="98" fill="#64748b" font-size="10" text-anchor="middle" class="font-sans">Passes raw JSON string payload</text>
+            </g>
+        </g>
+
+        <!-- Challenge-Response Sequence Architecture Box -->
+        <g transform="translate(24, 230)">
+            <rect x="0" y="0" width="1272" height="235" rx="12" fill="#111827" stroke="#334155" stroke-width="1"/>
+            <text x="20" y="28" fill="#e2e8f0" font-size="13" font-weight="700" class="font-sans">End-to-End Cryptographic Protocol Steps:</text>
+            
+            <!-- Step Flow Grid (4 Step Cards) -->
+            <!-- Step 1 -->
+            <g transform="translate(20, 45)">
+                <rect x="0" y="0" width="290" height="165" rx="8" fill="#1e293b" stroke="#0284c7" stroke-width="1"/>
+                <circle cx="24" cy="24" r="14" fill="#0284c7"/>
+                <text x="24" y="29" fill="#ffffff" font-size="12" font-weight="800" text-anchor="middle" class="font-sans">1</text>
+                <text x="48" y="28" fill="#38bdf8" font-size="12" font-weight="700" class="font-sans">Challenge Request</text>
+                
+                <text x="14" y="60" fill="#cbd5e1" font-size="10.5" class="font-sans">• Student calls <tspan fill="#38bdf8" class="font-mono">POST /api/challenge</tspan></text>
+                <text x="14" y="78" fill="#cbd5e1" font-size="10.5" class="font-sans">• Server creates 32B random nonce</text>
+                <text x="14" y="96" fill="#cbd5e1" font-size="10.5" class="font-sans">• Stored in DB with <tspan fill="#f59e0b" class="font-mono">status='issued'</tspan></text>
+                <text x="14" y="114" fill="#cbd5e1" font-size="10.5" class="font-sans">• Sets hard expiry: <tspan fill="#34d399" class="font-mono">now + 45s</tspan></text>
+                <text x="14" y="132" fill="#cbd5e1" font-size="10.5" class="font-sans">• Returns canonical challenge message</text>
+                <text x="14" y="150" fill="#64748b" font-size="10" class="font-sans">Rate limited: 20 req/min per student</text>
+            </g>
+
+            <!-- Step 2 -->
+            <g transform="translate(330, 45)">
+                <rect x="0" y="0" width="290" height="165" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="1"/>
+                <circle cx="24" cy="24" r="14" fill="#6366f1"/>
+                <text x="24" y="29" fill="#ffffff" font-size="12" font-weight="800" text-anchor="middle" class="font-sans">2</text>
+                <text x="48" y="28" fill="#818cf8" font-size="12" font-weight="700" class="font-sans">Client-Side Signing</text>
+                
+                <text x="14" y="60" fill="#cbd5e1" font-size="10.5" class="font-sans">• Builds message: <tspan fill="#a5b4fc" class="font-mono">v1|sid|nonce|iat</tspan></text>
+                <text x="14" y="78" fill="#cbd5e1" font-size="10.5" class="font-sans">• <tspan fill="#38bdf8" class="font-mono">SubtleCrypto.sign()</tspan> over P-256</text>
+                <text x="14" y="96" fill="#cbd5e1" font-size="10.5" class="font-sans">• Output: 64B IEEE-P1363 (<tspan fill="#c084fc" class="font-mono">r‖s</tspan>)</text>
+                <text x="14" y="114" fill="#cbd5e1" font-size="10.5" class="font-sans">• Encodes JSON into Canvas QR code</text>
+                <text x="14" y="132" fill="#34d399" font-size="10.5" font-weight="600" class="font-sans">✓ Private key never leaves hardware</text>
+                <text x="14" y="150" fill="#64748b" font-size="10" class="font-sans">Non-exportable CryptoKey in IndexedDB</text>
+            </g>
+
+            <!-- Step 3 -->
+            <g transform="translate(640, 45)">
+                <rect x="0" y="0" width="290" height="165" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+                <circle cx="24" cy="24" r="14" fill="#d97706"/>
+                <text x="24" y="29" fill="#ffffff" font-size="12" font-weight="800" text-anchor="middle" class="font-sans">3</text>
+                <text x="48" y="28" fill="#fbbf24" font-size="12" font-weight="700" class="font-sans">Optical Scan &amp; Relay</text>
+                
+                <text x="14" y="60" fill="#cbd5e1" font-size="10.5" class="font-sans">• Guard camera scans student QR</text>
+                <text x="14" y="78" fill="#cbd5e1" font-size="10.5" class="font-sans">• Extracts raw string verbatim</text>
+                <text x="14" y="96" fill="#cbd5e1" font-size="10.5" class="font-sans">• Sends <tspan fill="#fbbf24" class="font-mono">POST /api/verify</tspan> over TLS</text>
+                <text x="14" y="114" fill="#cbd5e1" font-size="10.5" class="font-sans">• Guard authentication cookie included</text>
+                <text x="14" y="132" fill="#cbd5e1" font-size="10.5" class="font-sans">• Guard does not parse or decide</text>
+                <text x="14" y="150" fill="#64748b" font-size="10" class="font-sans">Optical air gap protects integrity</text>
+            </g>
+
+            <!-- Step 4 -->
+            <g transform="translate(950, 45)">
+                <rect x="0" y="0" width="300" height="165" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1"/>
+                <circle cx="24" cy="24" r="14" fill="#059669"/>
+                <text x="24" y="29" fill="#ffffff" font-size="12" font-weight="800" text-anchor="middle" class="font-sans">4</text>
+                <text x="48" y="28" fill="#34d399" font-size="12" font-weight="700" class="font-sans">Verify &amp; Atomic Consume</text>
+                
+                <text x="14" y="60" fill="#cbd5e1" font-size="10.5" class="font-sans">• Server validates 10 security checks</text>
+                <text x="14" y="78" fill="#cbd5e1" font-size="10.5" class="font-sans">• Reconstructs message from <tspan fill="#34d399">DB row</tspan></text>
+                <text x="14" y="96" fill="#cbd5e1" font-size="10.5" class="font-sans">• Verifies ECDSA with public JWK</text>
+                <text x="14" y="114" fill="#cbd5e1" font-size="10.5" class="font-sans">• <tspan fill="#38bdf8" font-weight="700">Atomic UPDATE</tspan> nonce → consumed</text>
+                <text x="14" y="132" fill="#cbd5e1" font-size="10.5" class="font-sans">• Returns GRANT/DENY + logs event</text>
+                <text x="14" y="150" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Affected rows must equal 1 (No races)</text>
+            </g>
+        </g>
+    </g>
+    ''')
+
+    # SECTION 3: BACKEND API SERVER TIER (Center Full Width)
+    svg.append('''
+    <!-- ==================== TIER 3: BACKEND APPLICATION SERVER TIER ==================== -->
+    <g transform="translate(60, 680)">
+        <rect x="0" y="0" width="2680" height="600" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="#334155" stroke-width="1.5" filter="url(#drop-shadow)"/>
+        
+        <!-- Section Header -->
+        <path d="M 0 16 Q 0 0 16 0 L 2664 0 Q 2680 0 2680 16 L 2680 46 L 0 46 Z" fill="#1e293b" fill-opacity="0.7"/>
+        <text x="24" y="30" fill="#38bdf8" font-size="15" font-weight="700" class="font-sans" letter-spacing="1">3. BACKEND APPLICATION &amp; CRYPTOGRAPHIC VERIFICATION SERVER (Node.js 22.5+ / Express)</text>
+        <text x="2656" y="30" fill="#64748b" font-size="12" font-weight="600" text-anchor="end" class="font-sans">Native Platform Primitives • Zero 3rd Party Crypto Dependencies</text>
+
+        <!-- 3A: Edge Middleware & Request Pipeline -->
+        <g transform="translate(24, 65)">
+            <rect x="0" y="0" width="460" height="510" rx="12" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+            <path d="M 0 12 Q 0 0 12 0 L 448 0 Q 460 0 460 12 L 460 38 L 0 38 Z" fill="#0284c7" fill-opacity="0.25"/>
+            <text x="16" y="25" fill="#38bdf8" font-size="14" font-weight="700" class="font-sans">MIDDLEWARE &amp; EDGE DEFENSES</text>
+
+            <!-- Box 1: Token-Bucket Rate Limiter -->
+            <rect x="16" y="52" width="428" height="135" rx="8" fill="#1e293b" stroke="#0284c7" stroke-width="1"/>
+            <text x="28" y="74" fill="#38bdf8" font-size="12" font-weight="700" class="font-sans">Token-Bucket Rate Limiter (T7 Defense)</text>
+            <text x="28" y="93" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#e2e8f0" class="font-mono">POST /api/auth/login</tspan> : 5 req / min (by IP)</text>
+            <text x="28" y="111" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#e2e8f0" class="font-mono">POST /api/challenge</tspan> : 20 req / min (by User ID)</text>
+            <text x="28" y="129" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#e2e8f0" class="font-mono">POST /api/verify</tspan> : 60 req / min (by Guard ID)</text>
+            <text x="28" y="147" fill="#cbd5e1" font-size="11" class="font-sans">• Global fallback: 120 req / min</text>
+            <text x="28" y="167" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ In-Memory O(1) Token Bucket • Prevents Grinding &amp; DoS</text>
+
+            <!-- Box 2: Session & Auth Middleware -->
+            <rect x="16" y="200" width="428" height="135" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="28" y="222" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Session Auth &amp; RBAC Guard</text>
+            <text x="28" y="241" fill="#cbd5e1" font-size="11" class="font-sans">• Cookie: <tspan fill="#38bdf8" class="font-mono">sentryqr_sid</tspan> (32 random base64url bytes)</text>
+            <text x="28" y="259" fill="#cbd5e1" font-size="11" class="font-sans">• Flags: <tspan fill="#a5b4fc" class="font-mono">HttpOnly, SameSite=Lax, Secure</tspan></text>
+            <text x="28" y="277" fill="#cbd5e1" font-size="11" class="font-sans">• TTL: 8 Hours with active revocation support</text>
+            <text x="28" y="295" fill="#cbd5e1" font-size="11" class="font-sans">• Strict Role Gate: <tspan fill="#38bdf8">student</tspan> | <tspan fill="#34d399">guard</tspan> | <tspan fill="#818cf8">admin</tspan></text>
+            <text x="28" y="315" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Full Session Invalidation on Logout or Suspension</text>
+
+            <!-- Box 3: Schema Validator -->
+            <rect x="16" y="348" width="428" height="142" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="28" y="370" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Input Schema &amp; Injection Defense (T8)</text>
+            <text x="28" y="389" fill="#cbd5e1" font-size="11" class="font-sans">• Strict payload length &amp; JSON type assertions</text>
+            <text x="28" y="407" fill="#cbd5e1" font-size="11" class="font-sans">• Base64URL character set validation</text>
+            <text x="28" y="425" fill="#cbd5e1" font-size="11" class="font-sans">• Rejects private scalar <tspan fill="#f43f5e" class="font-mono">d</tspan> during JWK enrollment</text>
+            <text x="28" y="443" fill="#cbd5e1" font-size="11" class="font-sans">• Parameterized SQL: 100% prepared statements</text>
+            <text x="28" y="465" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Complete SQL Injection &amp; Memory Overflow Immunity</text>
+        </g>
+
+        <!-- 3B: The 10-Step Verification Engine Pipeline (Heart of System) -->
+        <g transform="translate(510, 65)">
+            <rect x="0" y="0" width="1380" height="510" rx="12" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+            <path d="M 0 12 Q 0 0 12 0 L 1368 0 Q 1380 0 1380 12 L 1380 38 L 0 38 Z" fill="#059669" fill-opacity="0.25"/>
+            <text x="16" y="25" fill="#34d399" font-size="14" font-weight="700" class="font-sans">CORE VERIFICATION ENGINE — 10-STEP SECURITY PIPELINE</text>
+            <text x="1364" y="25" fill="#a7f3d0" font-size="11" font-weight="600" text-anchor="end" class="font-sans">POST /api/verify Execution Chain</text>
+
+            <!-- 10 Steps Grid (2 columns of 5 steps) -->
+            <!-- Column 1: Pre-Crypto Checks -->
+            <g transform="translate(16, 50)">
+                <!-- Step 1 -->
+                <rect x="0" y="0" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#0284c7"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">1</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Payload Schema &amp; Type Check</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">MALFORMED_PAYLOAD</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Validates JSON object: <tspan fill="#cbd5e1" class="font-mono">v (int), sid (int), n (str), iat (int), sig (str)</tspan></text>
+                <text x="16" y="62" fill="#64748b" font-size="10" class="font-sans">Fails fast before any database lookup occurs</text>
+
+                <!-- Step 2 -->
+                <rect x="0" y="84" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#0284c7"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">2</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Protocol Version Validation</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">UNSUPPORTED_VERSION</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Ensures payload <tspan fill="#cbd5e1" class="font-mono">v === 1</tspan>. Prevents version rollback or downgrade attacks</text>
+                <text x="16" y="62" fill="#64748b" font-size="10" class="font-sans">Enables backward-incompatible crypto schema upgrades</text>
+
+                <!-- Step 3 -->
+                <rect x="0" y="168" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#0284c7"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">3</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Nonce Existence Lookup</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">UNKNOWN_NONCE</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Primary-key query on <tspan fill="#cbd5e1" class="font-mono">nonces</tspan> table. O(1) indexed lookup in SQLite</text>
+                <text x="16" y="62" fill="#64748b" font-size="10" class="font-sans">Rejects entirely fabricated or foreign nonces immediately</text>
+
+                <!-- Step 4 -->
+                <rect x="0" y="252" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#d97706"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">4</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Single-Use Nonce State Check</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">NONCE_REUSED</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Verifies stored row <tspan fill="#34d399" class="font-mono">status === 'issued'</tspan> (not already 'consumed')</text>
+                <text x="16" y="62" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Sequential Replay Defense (T1)</text>
+
+                <!-- Step 5 -->
+                <rect x="0" y="336" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#d97706"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">5</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Time-to-Live / Clock Expiry Check</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">CHALLENGE_EXPIRED</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Verifies <tspan fill="#cbd5e1" class="font-mono">Date.now() &lt; stored.expires_at</tspan> (45 second validity window)</text>
+                <text x="16" y="62" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Screenshot Sharing Defense (T1)</text>
+            </g>
+
+            <!-- Column 2: Identity, Crypto & Atomic Transition -->
+            <g transform="translate(695, 50)">
+                <!-- Step 6 -->
+                <rect x="0" y="0" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#0284c7"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">6</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Student Identity Binding</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">IDENTITY_MISMATCH</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Verifies stored <tspan fill="#cbd5e1" class="font-mono">nonces.user_id === payload.sid</tspan></text>
+                <text x="16" y="62" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Defeats Payload Relabelling &amp; Impersonation (T3)</text>
+
+                <!-- Step 7 & 8 -->
+                <rect x="0" y="84" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#0284c7"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">7/8</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Account Status &amp; Public Key Lookup</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">STUDENT_INACTIVE / UNREGISTERED</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Checks <tspan fill="#cbd5e1" class="font-mono">users.active === 1</tspan> and fetches active registered JWK</text>
+                <text x="16" y="62" fill="#64748b" font-size="10" class="font-sans">Enforces one-active-key invariant from public_keys table</text>
+
+                <!-- Step 9 -->
+                <rect x="0" y="168" width="665" height="74" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                <circle cx="20" cy="22" r="10" fill="#6366f1"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">9</text>
+                <text x="38" y="25" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Key Revocation Status Check</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">KEY_REVOKED</text>
+                <text x="16" y="46" fill="#94a3b8" font-size="10.5" class="font-sans">Confirms key is not flagged revoked (<tspan fill="#cbd5e1" class="font-mono">revoked_at IS NULL</tspan>)</text>
+                <text x="16" y="62" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Real-time revocation: immediate enforcement across all gates (T6)</text>
+
+                <!-- Step 10: Canonical Reconstruction & ECDSA Verification -->
+                <rect x="0" y="252" width="665" height="74" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+                <circle cx="20" cy="22" r="10" fill="#6366f1"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">10</text>
+                <text x="38" y="25" fill="#818cf8" font-size="12" font-weight="700" class="font-sans">Server Canonical Rebuild &amp; ECDSA Verification</text>
+                <text x="650" y="25" fill="#f43f5e" font-size="10" font-weight="700" text-anchor="end" class="font-mono">INVALID_SIGNATURE</text>
+                <text x="16" y="46" fill="#cbd5e1" font-size="10.5" class="font-sans">Rebuilds message from <tspan fill="#38bdf8" font-weight="700">STORED ROW</tspan>: <tspan fill="#a5b4fc" class="font-mono">v1|stored.user_id|stored.nonce|stored.issued_at</tspan></text>
+                <text x="16" y="62" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Verifies with crypto.verify('SHA256', msg, key, sig, dsaEncoding:'ieee-p1363')</text>
+
+                <!-- Step 11: Atomic Conditional Consume -->
+                <rect x="0" y="336" width="665" height="74" rx="6" fill="#042f2e" stroke="#14b8a6" stroke-width="1.5"/>
+                <circle cx="20" cy="22" r="10" fill="#0d9488"/><text x="20" y="26" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">11</text>
+                <text x="38" y="25" fill="#2dd4bf" font-size="12" font-weight="700" class="font-sans">Atomic Nonce State Transition (Anti-Race Lock)</text>
+                <text x="650" y="25" fill="#34d399" font-size="11" font-weight="800" text-anchor="end" class="font-mono">OK → GRANT</text>
+                <text x="16" y="46" fill="#ccfbf1" font-size="10.5" class="font-mono">UPDATE nonces SET status='consumed' WHERE nonce=? AND status='issued'</text>
+                <text x="16" y="62" fill="#5eead4" font-size="10" font-weight="700" class="font-sans">✓ Requires changes === 1. Defeats Parallel Verification Race Attacks (T1 Race)</text>
+            </g>
+
+            <!-- Bottom Result Banner -->
+            <rect x="16" y="425" width="1348" height="35" rx="6" fill="#090d16" stroke="#334155" stroke-width="1"/>
+            <text x="30" y="447" fill="#94a3b8" font-size="11" class="font-sans">Outcome Processing: </text>
+            <text x="160" y="447" fill="#34d399" font-size="11" font-weight="700" class="font-sans">GRANT (200 OK)</text>
+            <text x="280" y="447" fill="#94a3b8" font-size="11" class="font-sans">→ Returns student metadata + writes to <tspan fill="#cbd5e1" class="font-mono">entry_events</tspan> &amp; <tspan fill="#cbd5e1" class="font-mono">audit_logs</tspan></text>
+            <text x="880" y="447" fill="#f43f5e" font-size="11" font-weight="700" class="font-sans">DENY (200 OK)</text>
+            <text x="990" y="447" fill="#94a3b8" font-size="11" class="font-sans">→ Returns reasonCode + logs incident trail (Zero metadata leaked)</text>
+        </g>
+
+        <!-- 3C: Core Services & Cryptographic Primitives -->
+        <g transform="translate(1915, 65)">
+            <rect x="0" y="0" width="740" height="510" rx="12" fill="#111827" stroke="#818cf8" stroke-width="1.5"/>
+            <path d="M 0 12 Q 0 0 12 0 L 728 0 Q 740 0 740 12 L 740 38 L 0 38 Z" fill="#4f46e5" fill-opacity="0.25"/>
+            <text x="16" y="25" fill="#818cf8" font-size="14" font-weight="700" class="font-sans">SERVICES &amp; CRYPTOGRAPHIC PRIMITIVES</text>
+
+            <!-- Box 1: Core Services -->
+            <rect x="16" y="52" width="708" height="150" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+            <text x="28" y="74" fill="#a5b4fc" font-size="12" font-weight="700" class="font-sans">Internal Application Services</text>
+            <text x="28" y="94" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#38bdf8" font-weight="600">ChallengeService</tspan>: Cryptographic Nonce generation (32B random) &amp; TTL enforcement</text>
+            <text x="28" y="112" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#34d399" font-weight="600">VerificationService</tspan>: Orchestrates 10-step pipeline &amp; atomic conditional state transitions</text>
+            <text x="28" y="130" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#818cf8" font-weight="600">KeyService</tspan>: JWK schema validation, one-active-key invariant enforcement, key revocation</text>
+            <text x="28" y="148" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#f59e0b" font-weight="600">OverrideService</tspan>: Guard manual request escalation, approval workflow &amp; audit linkage</text>
+            <text x="28" y="166" fill="#cbd5e1" font-size="11" class="font-sans">• <tspan fill="#ec4899" font-weight="600">AuditService</tspan>: Dual-stream append-only security logs (<tspan class="font-mono">entry_events</tspan> + <tspan class="font-mono">audit_logs</tspan>)</text>
+            <text x="28" y="186" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Clean separation of concerns with full automated test coverage</text>
+
+            <!-- Box 2: Crypto Primitive Details -->
+            <rect x="16" y="215" width="708" height="275" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+            <text x="28" y="237" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Native Platform Cryptographic Subsystem (node:crypto)</text>
+            
+            <g transform="translate(28, 250)">
+                <!-- Crypto 1: ECDSA P-256 -->
+                <rect x="0" y="0" width="325" height="100" rx="6" fill="#0b0f19" stroke="#0284c7" stroke-width="1"/>
+                <text x="12" y="20" fill="#38bdf8" font-size="11" font-weight="700" class="font-sans">ECDSA P-256 (prime256v1)</text>
+                <text x="12" y="38" fill="#94a3b8" font-size="10" class="font-sans">• Matched 128-bit security level with SHA-256</text>
+                <text x="12" y="54" fill="#94a3b8" font-size="10" class="font-sans">• 64-byte raw signature (IEEE-P1363 <tspan fill="#a78bfa" class="font-mono">r‖s</tspan>)</text>
+                <text x="12" y="70" fill="#94a3b8" font-size="10" class="font-sans">• Compact payload keeps QR at Version ~9</text>
+                <text x="12" y="86" fill="#34d399" font-size="9.5" font-weight="600" class="font-sans">✓ Fast camera scan off phone screen</text>
+
+                <!-- Crypto 2: scrypt Hashing -->
+                <rect x="340" y="0" width="325" height="100" rx="6" fill="#0b0f19" stroke="#818cf8" stroke-width="1"/>
+                <text x="12" y="20" fill="#818cf8" font-size="11" font-weight="700" class="font-sans">scrypt Password Hashing</text>
+                <text x="12" y="38" fill="#94a3b8" font-size="10" class="font-sans">• 16-byte cryptographically secure random salt</text>
+                <text x="12" y="54" fill="#94a3b8" font-size="10" class="font-sans">• Memory-hard key derivation algorithm</text>
+                <text x="12" y="70" fill="#94a3b8" font-size="10" class="font-sans">• Verified via <tspan fill="#cbd5e1" class="font-mono">timingSafeEqual</tspan></text>
+                <text x="12" y="86" fill="#34d399" font-size="9.5" font-weight="600" class="font-sans">✓ Zero timing side-channel leaks</text>
+
+                <!-- Crypto 3: Nonce Randomness -->
+                <rect x="0" y="110" width="325" height="110" rx="6" fill="#0b0f19" stroke="#34d399" stroke-width="1"/>
+                <text x="12" y="20" fill="#34d399" font-size="11" font-weight="700" class="font-sans">CSPRN Nonce Generation</text>
+                <text x="12" y="38" fill="#94a3b8" font-size="10" class="font-sans">• 32 bytes from <tspan fill="#cbd5e1" class="font-mono">crypto.randomBytes</tspan></text>
+                <text x="12" y="54" fill="#94a3b8" font-size="10" class="font-sans">• 256 bits of CSPRNG entropy</text>
+                <text x="12" y="70" fill="#94a3b8" font-size="10" class="font-sans">• Collision &amp; guessing probability: 2⁻²⁵⁶</text>
+                <text x="12" y="86" fill="#94a3b8" font-size="10" class="font-sans">• Encoded as safe base64url string</text>
+                <text x="12" y="102" fill="#34d399" font-size="9.5" font-weight="600" class="font-sans">✓ Collision-free global uniqueness</text>
+
+                <!-- Crypto 4: Non-Repudiation vs HMAC -->
+                <rect x="340" y="110" width="325" height="110" rx="6" fill="#0b0f19" stroke="#f59e0b" stroke-width="1"/>
+                <text x="12" y="20" fill="#fbbf24" font-size="11" font-weight="700" class="font-sans">Why Signatures vs HMAC / Hashes</text>
+                <text x="12" y="38" fill="#94a3b8" font-size="10" class="font-sans">• HMAC: Symmetric (Verifier can forge tokens)</text>
+                <text x="12" y="54" fill="#cbd5e1" font-size="10" class="font-sans">• Digital Signature: Asymmetric</text>
+                <text x="12" y="70" fill="#cbd5e1" font-size="10" class="font-sans">  - Student holds ONLY private key</text>
+                <text x="12" y="86" fill="#cbd5e1" font-size="10" class="font-sans">  - Server holds public key (Cannot forge)</text>
+                <text x="12" y="102" fill="#34d399" font-size="9.5" font-weight="600" class="font-sans">✓ Absolute Non-Repudiation for Legal Audit</text>
+            </g>
+        </g>
+    </g>
+    ''')
+
+    # SECTION 4: PERSISTENCE / DATABASE TIER (Bottom Left & Center)
+    svg.append('''
+    <!-- ==================== TIER 4: PERSISTENCE & DATABASE TIER (SQLite WAL) ==================== -->
+    <g transform="translate(60, 1300)">
+        <rect x="0" y="0" width="2680" height="390" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="#334155" stroke-width="1.5" filter="url(#drop-shadow)"/>
+        
+        <!-- Section Header -->
+        <path d="M 0 16 Q 0 0 16 0 L 2664 0 Q 2680 0 2680 16 L 2680 46 L 0 46 Z" fill="#1e293b" fill-opacity="0.7"/>
+        <text x="24" y="30" fill="#38bdf8" font-size="15" font-weight="700" class="font-sans" letter-spacing="1">4. DURABLE PERSISTENCE &amp; DATABASE SCHEMA (SQLite via node:sqlite)</text>
+        <text x="2656" y="30" fill="#64748b" font-size="12" font-weight="600" text-anchor="end" class="font-sans">PRAGMA journal_mode=WAL • foreign_keys=ON • busy_timeout=5000</text>
+
+        <!-- 8 Database Tables in 4 Columns -->
+        <!-- Col 1: users & students -->
+        <g transform="translate(24, 60)">
+            <!-- users Table -->
+            <rect x="0" y="0" width="310" height="150" rx="8" fill="#111827" stroke="#38bdf8" stroke-width="1"/>
+            <path d="M 0 8 Q 0 0 8 0 L 302 0 Q 310 0 310 8 L 310 28 L 0 28 Z" fill="#0284c7" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#38bdf8" font-size="12" font-weight="700" class="font-mono">users</text>
+            <text x="298" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Core Accounts</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• username (TEXT UNIQUE)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• password_hash (TEXT scrypt)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• password_salt (TEXT 16B hex)</text>
+            <text x="12" y="118" fill="#cbd5e1" font-size="10.5" class="font-mono">• role (student | guard | admin)</text>
+            <text x="12" y="136" fill="#cbd5e1" font-size="10.5" class="font-mono">• active (INTEGER 0/1)</text>
+
+            <!-- students Profile Table -->
+            <rect x="0" y="160" width="310" height="150" rx="8" fill="#111827" stroke="#38bdf8" stroke-width="1"/>
+            <path d="M 0 8 Q 0 0 8 0 L 302 0 Q 310 0 310 8 L 310 28 L 0 28 Z" fill="#0284c7" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#38bdf8" font-size="12" font-weight="700" class="font-mono">students</text>
+            <text x="298" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Profile Details</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 user_id (INTEGER PK/FK)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• roll_no (TEXT UNIQUE)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• room_no (TEXT)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• hostel_block (TEXT)</text>
+            <text x="12" y="126" fill="#94a3b8" font-size="10" class="font-sans">1-to-1 profile extension for student role</text>
+            <text x="12" y="142" fill="#64748b" font-size="9.5" class="font-sans">Keeps guard &amp; admin rows normalized</text>
+        </g>
+
+        <!-- Col 2: public_keys & nonces -->
+        <g transform="translate(354, 60)">
+            <!-- public_keys Table -->
+            <rect x="0" y="0" width="320" height="150" rx="8" fill="#111827" stroke="#818cf8" stroke-width="1.5"/>
+            <path d="M 0 8 Q 0 0 8 0 L 312 0 Q 320 0 320 8 L 320 28 L 0 28 Z" fill="#4f46e5" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#818cf8" font-size="12" font-weight="700" class="font-mono">public_keys</text>
+            <text x="308" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">PKI Registry</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• user_id (INTEGER FK)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• kid (TEXT UNIQUE hash)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• jwk (TEXT public key)</text>
+            <text x="12" y="118" fill="#a5b4fc" font-size="10.5" class="font-mono">• active (INTEGER 0/1) [UNIQUE]</text>
+            <text x="12" y="136" fill="#cbd5e1" font-size="10.5" class="font-mono">• revoked_at (INTEGER epoch)</text>
+
+            <!-- nonces Table -->
+            <rect x="0" y="160" width="320" height="150" rx="8" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+            <path d="M 0 8 Q 0 0 8 0 L 312 0 Q 320 0 320 8 L 320 28 L 0 28 Z" fill="#059669" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#34d399" font-size="12" font-weight="700" class="font-mono">nonces</text>
+            <text x="308" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Anti-Replay Core</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 nonce (TEXT PK 32B)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• user_id (INTEGER FK)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• issued_at (INTEGER epoch)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• expires_at (INTEGER epoch)</text>
+            <text x="12" y="118" fill="#34d399" font-size="10.5" font-weight="700" class="font-mono">• status (issued → consumed)</text>
+            <text x="12" y="136" fill="#cbd5e1" font-size="10.5" class="font-mono">• consumed_at (INTEGER epoch)</text>
+        </g>
+
+        <!-- Col 3: entry_events & audit_logs -->
+        <g transform="translate(694, 60)">
+            <!-- entry_events Table -->
+            <rect x="0" y="0" width="340" height="150" rx="8" fill="#111827" stroke="#38bdf8" stroke-width="1"/>
+            <path d="M 0 8 Q 0 0 8 0 L 332 0 Q 340 0 340 8 L 340 28 L 0 28 Z" fill="#0284c7" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#38bdf8" font-size="12" font-weight="700" class="font-mono">entry_events</text>
+            <text x="328" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Gate History</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• user_id (INTEGER FK)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• guard_user_id (INTEGER FK)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• nonce (TEXT)</text>
+            <text x="12" y="118" fill="#38bdf8" font-size="10.5" font-weight="700" class="font-mono">• decision (GRANT | DENY)</text>
+            <text x="12" y="136" fill="#cbd5e1" font-size="10.5" class="font-mono">• reason_code, created_at</text>
+
+            <!-- audit_logs Table -->
+            <rect x="0" y="160" width="340" height="150" rx="8" fill="#111827" stroke="#818cf8" stroke-width="1"/>
+            <path d="M 0 8 Q 0 0 8 0 L 332 0 Q 340 0 340 8 L 340 28 L 0 28 Z" fill="#4f46e5" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#818cf8" font-size="12" font-weight="700" class="font-mono">audit_logs</text>
+            <text x="328" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Forensic Trail</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• ts (INTEGER epoch ms)</text>
+            <text x="12" y="82" fill="#a5b4fc" font-size="10.5" class="font-mono">• event_type (VERIFY, LOGIN...)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• actor_user_id, subject_user_id</text>
+            <text x="12" y="118" fill="#cbd5e1" font-size="10.5" class="font-mono">• decision, reason_code</text>
+            <text x="12" y="136" fill="#cbd5e1" font-size="10.5" class="font-mono">• detail (JSON), ip (TEXT)</text>
+        </g>
+
+        <!-- Col 4: auth_sessions & override_requests -->
+        <g transform="translate(1054, 60)">
+            <!-- auth_sessions Table -->
+            <rect x="0" y="0" width="320" height="150" rx="8" fill="#111827" stroke="#38bdf8" stroke-width="1"/>
+            <path d="M 0 8 Q 0 0 8 0 L 312 0 Q 320 0 320 8 L 320 28 L 0 28 Z" fill="#0284c7" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#38bdf8" font-size="12" font-weight="700" class="font-mono">auth_sessions</text>
+            <text x="308" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Cookie Store</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 id (TEXT PK 32B)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• user_id (INTEGER FK)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• created_at (INTEGER epoch)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• expires_at (INTEGER epoch)</text>
+            <text x="12" y="118" fill="#cbd5e1" font-size="10.5" class="font-mono">• revoked (INTEGER 0/1)</text>
+            <text x="12" y="136" fill="#64748b" font-size="9.5" class="font-sans">Backs sentryqr_sid HttpOnly cookie</text>
+
+            <!-- override_requests Table -->
+            <rect x="0" y="160" width="320" height="150" rx="8" fill="#111827" stroke="#f59e0b" stroke-width="1"/>
+            <path d="M 0 8 Q 0 0 8 0 L 312 0 Q 320 0 320 8 L 320 28 L 0 28 Z" fill="#d97706" fill-opacity="0.3"/>
+            <text x="12" y="19" fill="#fbbf24" font-size="12" font-weight="700" class="font-mono">override_requests</text>
+            <text x="308" y="19" fill="#94a3b8" font-size="10" text-anchor="end" class="font-sans">Exception Flow</text>
+            <text x="12" y="46" fill="#f43f5e" font-size="10.5" class="font-mono">🔑 id (INTEGER PK)</text>
+            <text x="12" y="64" fill="#cbd5e1" font-size="10.5" class="font-mono">• guard_user_id (INTEGER FK)</text>
+            <text x="12" y="82" fill="#cbd5e1" font-size="10.5" class="font-mono">• student_user_id (INTEGER FK)</text>
+            <text x="12" y="100" fill="#cbd5e1" font-size="10.5" class="font-mono">• reason (TEXT dead battery...)</text>
+            <text x="12" y="118" fill="#fbbf24" font-size="10.5" font-weight="700" class="font-mono">• status (pending | approved | denied)</text>
+            <text x="12" y="136" fill="#cbd5e1" font-size="10.5" class="font-mono">• decided_by (INTEGER FK)</text>
+        </g>
+
+        <!-- Right Side: DB Indexes, Concurrency & Security Rules -->
+        <g transform="translate(1394, 60)">
+            <rect x="0" y="0" width="1260" height="310" rx="8" fill="#111827" stroke="#334155" stroke-width="1"/>
+            <text x="20" y="28" fill="#e2e8f0" font-size="13" font-weight="700" class="font-sans">Database Concurrency, Indexing &amp; Integrity Invariants</text>
+
+            <g transform="translate(20, 45)">
+                <!-- Card 1: Unique Invariant -->
+                <rect x="0" y="0" width="390" height="120" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="1"/>
+                <text x="14" y="24" fill="#818cf8" font-size="12" font-weight="700" class="font-sans">1. Single Active Key Invariant (T6)</text>
+                <rect x="14" y="34" width="362" height="34" rx="4" fill="#090d16"/>
+                <text x="22" y="55" fill="#a5b4fc" font-size="9.5" class="font-mono">CREATE UNIQUE INDEX idx_public_keys_one_active</text>
+                <text x="22" y="65" fill="#a5b4fc" font-size="9.5" class="font-mono">  ON public_keys(user_id) WHERE active = 1;</text>
+                <text x="14" y="88" fill="#cbd5e1" font-size="10.5" class="font-sans">• Partial unique index makes 2 active keys impossible</text>
+                <text x="14" y="106" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Re-enrolment deactivates previous key atomically</text>
+
+                <!-- Card 2: Atomic Nonce Lock -->
+                <rect x="410" y="0" width="400" height="120" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1"/>
+                <text x="14" y="24" fill="#34d399" font-size="12" font-weight="700" class="font-sans">2. Atomic Nonce Consume (T1 Race)</text>
+                <rect x="14" y="34" width="372" height="34" rx="4" fill="#090d16"/>
+                <text x="22" y="55" fill="#5eead4" font-size="9.5" class="font-mono">UPDATE nonces SET status='consumed'</text>
+                <text x="22" y="65" fill="#5eead4" font-size="9.5" class="font-mono">  WHERE nonce=? AND status='issued';</text>
+                <text x="14" y="88" fill="#cbd5e1" font-size="10.5" class="font-sans">• Eliminates TOCTTOU race conditions</text>
+                <text x="14" y="106" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Exactly 1 concurrent request granted; runner-up denied</text>
+
+                <!-- Card 3: WAL Mode & Performance -->
+                <rect x="830" y="0" width="390" height="120" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+                <text x="14" y="24" fill="#38bdf8" font-size="12" font-weight="700" class="font-sans">3. WAL Engine &amp; Gate Latency</text>
+                <text x="14" y="48" fill="#cbd5e1" font-size="10.5" class="font-sans">• <tspan fill="#38bdf8" class="font-mono">PRAGMA journal_mode = WAL</tspan></text>
+                <text x="14" y="66" fill="#cbd5e1" font-size="10.5" class="font-sans">• Non-blocking concurrent reads during gate writes</text>
+                <text x="14" y="84" fill="#cbd5e1" font-size="10.5" class="font-sans">• Primary-key lookup on nonce on critical verification path</text>
+                <text x="14" y="106" fill="#34d399" font-size="10" font-weight="600" class="font-sans">✓ Gate decision latency &lt; 8ms on standard hardware</text>
+
+                <!-- Secondary Indexes list -->
+                <rect x="0" y="130" width="1220" height="115" rx="6" fill="#0b0f19" stroke="#1e293b" stroke-width="1"/>
+                <text x="14" y="152" fill="#e2e8f0" font-size="11.5" font-weight="700" class="font-sans">Optimized B-Tree Index Coverage:</text>
+                <text x="14" y="174" fill="#94a3b8" font-size="10.5" class="font-mono">• idx_nonces_user: <tspan fill="#cbd5e1">nonces(user_id, issued_at DESC)</tspan></text>
+                <text x="420" y="174" fill="#94a3b8" font-size="10.5" class="font-mono">• idx_entry_user: <tspan fill="#cbd5e1">entry_events(user_id, created_at DESC)</tspan></text>
+                <text x="820" y="174" fill="#94a3b8" font-size="10.5" class="font-mono">• idx_audit_ts: <tspan fill="#cbd5e1">audit_logs(ts DESC)</tspan></text>
+                <text x="14" y="196" fill="#94a3b8" font-size="10.5" class="font-mono">• idx_nonces_expiry: <tspan fill="#cbd5e1">nonces(expires_at)</tspan></text>
+                <text x="420" y="196" fill="#94a3b8" font-size="10.5" class="font-mono">• idx_entry_created: <tspan fill="#cbd5e1">entry_events(created_at DESC)</tspan></text>
+                <text x="820" y="196" fill="#94a3b8" font-size="10.5" class="font-mono">• idx_audit_type: <tspan fill="#cbd5e1">audit_logs(event_type, ts DESC)</tspan></text>
+                <text x="14" y="232" fill="#64748b" font-size="10" class="font-sans">Retention Policy: Nonces purged after 1 hour (housekeeping only); entry_events and audit_logs are permanently immutable.</text>
+            </g>
+        </g>
+    </g>
+    ''')
+
+    # SECTION 5: THREAT DEFENSE MATRIX (Bottom Full Width)
+    svg.append('''
+    <!-- ==================== TIER 5: THREAT MODEL DEFENSE MATRIX (T1 - T9) ==================== -->
+    <g transform="translate(60, 1710)">
+        <rect x="0" y="0" width="2680" height="280" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="#334155" stroke-width="1.5" filter="url(#drop-shadow)"/>
+        
+        <!-- Section Header -->
+        <path d="M 0 16 Q 0 0 16 0 L 2664 0 Q 2680 0 2680 16 L 2680 42 L 0 42 Z" fill="#1e293b" fill-opacity="0.7"/>
+        <text x="24" y="28" fill="#34d399" font-size="15" font-weight="700" class="font-sans" letter-spacing="1">5. SECURITY VALIDATION &amp; THREAT MITIGATION MATRIX (THREATS T1 — T9)</text>
+        <text x="2656" y="28" fill="#a7f3d0" font-size="12" font-weight="600" text-anchor="end" class="font-sans">85 Automated Tests + 18-Check Attack Simulation Suite Passing</text>
+
+        <!-- 9 Threat Cards in 3x3 Grid or Row -->
+        <!-- Row 1: T1, T2, T3 -->
+        <g transform="translate(24, 52)">
+            <!-- T1 Card -->
+            <rect x="0" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="10" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="29" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T1</text>
+            <text x="58" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Replay &amp; Screenshot Sharing</text>
+            <text x="850" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="58" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Atomic conditional SQLite consume (<tspan class="font-mono">UPDATE WHERE status='issued'</tspan>) + 45s hard TTL window</text>
+
+            <!-- T2 Card -->
+            <rect x="885" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="895" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="914" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T2</text>
+            <text x="943" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Credential Sharing (Insider)</text>
+            <text x="1735" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="943" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> WebCrypto non-extractable key (<tspan class="font-mono">extractable: false</tspan>). No transferable digital credential exists</text>
+
+            <!-- T3 Card -->
+            <rect x="1770" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="1780" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="1799" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T3</text>
+            <text x="1828" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Payload Relabelling / Impersonation</text>
+            <text x="2620" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="1828" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Server rebuilds canonical message exclusively from stored DB row; client fields ignored</text>
+        </g>
+
+        <!-- Row 2: T4, T5, T6 -->
+        <g transform="translate(24, 124)">
+            <!-- T4 Card -->
+            <rect x="0" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="10" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="29" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T4</text>
+            <text x="58" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Signature or Field Tampering</text>
+            <text x="850" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="58" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> ECDSA P-256 IEEE-P1363 verification fails on single bit alteration (<tspan class="font-mono">INVALID_SIGNATURE</tspan>)</text>
+
+            <!-- T5 Card -->
+            <rect x="885" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="895" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="914" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T5</text>
+            <text x="943" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Man-in-the-Middle (MitM)</text>
+            <text x="1735" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="943" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Optical air gap between student &amp; guard eliminates local network intercept path + TLS endpoints</text>
+
+            <!-- T6 Card -->
+            <rect x="1770" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#0284c7" stroke-width="1"/>
+            <rect x="1780" y="10" width="38" height="44" rx="4" fill="#0284c7" fill-opacity="0.25"/>
+            <text x="1799" y="36" fill="#38bdf8" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T6</text>
+            <text x="1828" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Rogue Key Registration</text>
+            <text x="2620" y="26" fill="#38bdf8" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ MITIGATED (Single Key Invariant)</text>
+            <text x="1828" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Session-bound registration, DB partial unique index enforces 1 active key, full audit trail</text>
+        </g>
+
+        <!-- Row 3: T7, T8, T9 -->
+        <g transform="translate(24, 196)">
+            <!-- T7 Card -->
+            <rect x="0" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="10" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="29" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T7</text>
+            <text x="58" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Brute Force &amp; Challenge Flooding</text>
+            <text x="850" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="58" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Multi-tier token bucket rate limiters (Login: 5/m, Challenge: 20/m, Verify: 60/m) with <tspan class="font-mono">Retry-After</tspan></text>
+
+            <!-- T8 Card -->
+            <rect x="885" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="895" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="914" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T8</text>
+            <text x="943" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">SQL Injection &amp; Memory Flooding</text>
+            <text x="1735" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ FULLY MITIGATED</text>
+            <text x="943" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Prepared SQL statements with parameterized bindings across entire codebase; strict payload bounds</text>
+
+            <!-- T9 Card -->
+            <rect x="1770" y="0" width="865" height="64" rx="6" fill="#111827" stroke="#059669" stroke-width="1"/>
+            <rect x="1780" y="10" width="38" height="44" rx="4" fill="#059669" fill-opacity="0.25"/>
+            <text x="1799" y="36" fill="#34d399" font-size="13" font-weight="800" text-anchor="middle" class="font-mono">T9</text>
+            <text x="1828" y="26" fill="#e2e8f0" font-size="12" font-weight="700" class="font-sans">Compromised Guard Terminal</text>
+            <text x="2620" y="26" fill="#34d399" font-size="10" font-weight="700" text-anchor="end" class="font-sans">✓ ARCHITECTURALLY CONFINED</text>
+            <text x="1828" y="46" fill="#94a3b8" font-size="10.5" class="font-sans"><tspan fill="#cbd5e1" font-weight="600">Primary Defense:</tspan> Guard device has ZERO authority; server is sole arbiter and writes immutable forensic logs</text>
+        </g>
+    </g>
+    ''')
+
+    svg.append('</svg>')
+    return "".join(svg)
+
+def main():
+    svg_content = build_architecture_svg()
+    
+    docs_dir = "/home/paufey/Documents/github projects/PBL Project/docs"
+    root_dir = "/home/paufey/Documents/github projects/PBL Project"
+    
+    svg_path = os.path.join(docs_dir, "architecture_diagram.svg")
+    png_temp = os.path.join(docs_dir, "architecture_diagram_temp.png")
+    jpg_docs_path = os.path.join(docs_dir, "architecture_diagram.jpeg")
+    jpg_root_path = os.path.join(root_dir, "architecture_diagram.jpeg")
+    
+    print(f"Writing SVG to {svg_path}...")
+    with open(svg_path, "w", encoding="utf-8") as f:
+        f.write(svg_content)
+        
+    print("Rendering SVG to PNG via rsvg-convert...")
+    subprocess.run(["rsvg-convert", "-w", "2800", "-h", "2050", "-f", "png", svg_path, "-o", png_temp], check=True)
+    
+    print("Converting PNG to High-Quality JPEG (Quality 96)...")
+    img = Image.open(png_temp).convert("RGB")
+    img.save(jpg_docs_path, "JPEG", quality=96, optimize=True)
+    img.save(jpg_root_path, "JPEG", quality=96, optimize=True)
+    
+    if os.path.exists(png_temp):
+        os.remove(png_temp)
+        
+    print(f"Successfully generated:")
+    print(f"  - {jpg_docs_path}")
+    print(f"  - {jpg_root_path}")
+
+if __name__ == "__main__":
+    main()

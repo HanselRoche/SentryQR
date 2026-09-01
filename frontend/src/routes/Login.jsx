@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ShieldCheck } from 'lucide-react';
 import { homeFor, useAuth } from '../lib/auth.jsx';
+import Alert from '../components/Alert.jsx';
 
 // Demo fixtures matching backend/src/db/seed.js — one-click login keeps the
 // live demo moving instead of stopping to type credentials.
@@ -45,14 +47,21 @@ export default function Login() {
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
-        <h1>
-          Sentry<span>QR</span>
-        </h1>
+        <div className="brand">
+          <span className="brand-mark">
+            <ShieldCheck size={19} />
+          </span>
+          <span className="brand-text">
+            Sentry<span>QR</span>
+          </span>
+        </div>
+
+        <h1 style={{ fontSize: '1.35rem' }}>Sign in</h1>
         <p className="muted" style={{ marginTop: 0 }}>
           Secure hostel entry — dynamic, signed, single-use QR credentials.
         </p>
 
-        {error && <div className="alert error">{error}</div>}
+        {error && <Alert tone="error">{error}</Alert>}
 
         <div className="field">
           <label htmlFor="username">Username</label>
@@ -77,17 +86,18 @@ export default function Login() {
           />
         </div>
 
-        <button type="submit" disabled={busy} style={{ width: '100%' }}>
+        <button type="submit" className="block" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
 
         <div className="demo-accounts">
-          Demo accounts:
-          <div>
+          Demo accounts
+          <div className="row">
             {DEMO.map((account) => (
               <button
                 key={account.username}
                 type="button"
+                className="small"
                 disabled={busy}
                 onClick={(e) => submit(e, account)}
               >

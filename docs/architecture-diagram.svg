@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120" font-family="DejaVu Sans, Liberation Sans, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b6672"/>
+    </marker>
+    <marker id="arrowOpt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c9772a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1800" height="1120" fill="#f7f8fa"/>
+
+  <text x="60" y="62" font-size="38" font-weight="bold" fill="#1f2933">SentryQR — System Architecture</text>
+  <text x="60" y="96" font-size="20" fill="#5b6672">Secure hostel entry with a QR code that changes every 30 seconds</text>
+
+  <!-- ===== CLIENTS ===== -->
+  <rect x="60" y="130" width="470" height="190" rx="14" fill="#e8f0fe" stroke="#3b6fd4" stroke-width="2.5"/>
+  <text x="86" y="176" font-size="26" font-weight="bold" fill="#1f2933">Student</text>
+  <line x1="86" y1="192" x2="504" y2="192" stroke="#3b6fd4" stroke-width="1" opacity="0.4"/>
+  <text x="86" y="228" font-size="20" fill="#1f2933">private key never leaves the phone</text>
+  <text x="86" y="262" font-size="20" fill="#1f2933">shows a QR that changes every 30 s</text>
+  <text x="86" y="296" font-size="20" fill="#1f2933">no password or ID card at the gate</text>
+
+  <rect x="720" y="130" width="430" height="190" rx="14" fill="#e8f0fe" stroke="#3b6fd4" stroke-width="2.5"/>
+  <text x="746" y="176" font-size="26" font-weight="bold" fill="#1f2933">Guard</text>
+  <line x1="746" y1="192" x2="1124" y2="192" stroke="#3b6fd4" stroke-width="1" opacity="0.4"/>
+  <text x="746" y="228" font-size="20" fill="#1f2933">scans the QR with a camera</text>
+  <text x="746" y="262" font-size="20" fill="#1f2933">sees GRANT or DENY</text>
+  <text x="746" y="296" font-size="20" font-weight="bold" fill="#b3261e">decides nothing itself</text>
+
+  <rect x="1270" y="130" width="470" height="190" rx="14" fill="#e8f0fe" stroke="#3b6fd4" stroke-width="2.5"/>
+  <text x="1296" y="176" font-size="26" font-weight="bold" fill="#1f2933">Admin</text>
+  <line x1="1296" y1="192" x2="1714" y2="192" stroke="#3b6fd4" stroke-width="1" opacity="0.4"/>
+  <text x="1296" y="228" font-size="20" fill="#1f2933">enrols students and guards</text>
+  <text x="1296" y="262" font-size="20" fill="#1f2933">revokes a lost device's key</text>
+  <text x="1296" y="296" font-size="20" fill="#1f2933">reads the audit log</text>
+
+  <!-- optical hop -->
+  <polyline points="250,320 250,362 900,362 900,320" fill="none" stroke="#c9772a" stroke-width="3" stroke-dasharray="11 9" marker-end="url(#arrowOpt)"/>
+  <text x="620" y="394" font-size="20" font-weight="bold" fill="#c9772a" text-anchor="middle">QR read by camera off the screen</text>
+  <text x="620" y="420" font-size="19" fill="#c9772a" text-anchor="middle">no network path between the two devices</text>
+
+  <!-- clients to transport -->
+  <line x1="140" y1="320" x2="140" y2="466" stroke="#5b6672" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <text x="156" y="450" font-size="19" fill="#3f4a56">asks for a code</text>
+
+  <line x1="1010" y1="320" x2="1010" y2="466" stroke="#5b6672" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <text x="1026" y="450" font-size="19" fill="#3f4a56">sends the scanned QR</text>
+
+  <line x1="1500" y1="320" x2="1500" y2="466" stroke="#5b6672" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <text x="1516" y="450" font-size="19" fill="#3f4a56">manages the system</text>
+
+  <!-- transport -->
+  <rect x="60" y="468" width="1680" height="56" rx="10" fill="#eceff3" stroke="#8b95a1" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="900" y="504" font-size="20" fill="#3f4a56" text-anchor="middle">HTTPS / TLS  ·  signed-in session cookie  ·  every device talks only to the server, never to each other</text>
+
+  <!-- ===== SERVER ===== -->
+  <rect x="60" y="560" width="1680" height="300" rx="14" fill="#eef7ee" stroke="#2e7d4f" stroke-width="2.5"/>
+  <text x="90" y="606" font-size="27" font-weight="bold" fill="#1f2933">API server — the only component that decides</text>
+  <text x="90" y="634" font-size="19" fill="#5b6672">Node.js + Express</text>
+
+  <rect x="90" y="654" width="382" height="152" rx="10" fill="#ffffff" stroke="#2e7d4f" stroke-width="1.8"/>
+  <text x="114" y="692" font-size="22" font-weight="bold" fill="#1f2933">Challenge</text>
+  <text x="114" y="726" font-size="18" fill="#1f2933">hands out a random one-time</text>
+  <text x="114" y="752" font-size="18" fill="#1f2933">code, valid for 45 seconds</text>
+  <text x="114" y="784" font-size="18" font-style="italic" fill="#2e7d4f">a screenshot goes stale</text>
+
+  <rect x="502" y="654" width="382" height="152" rx="10" fill="#fdf1e3" stroke="#c9772a" stroke-width="1.8"/>
+  <text x="526" y="692" font-size="22" font-weight="bold" fill="#1f2933">Verify</text>
+  <text x="526" y="726" font-size="18" fill="#1f2933">checks the signature against</text>
+  <text x="526" y="752" font-size="18" fill="#1f2933">the student's registered key,</text>
+  <text x="526" y="784" font-size="18" font-weight="bold" fill="#b3261e">then burns the code</text>
+
+  <rect x="914" y="654" width="382" height="152" rx="10" fill="#ffffff" stroke="#2e7d4f" stroke-width="1.8"/>
+  <text x="938" y="692" font-size="22" font-weight="bold" fill="#1f2933">Sessions &amp; roles</text>
+  <text x="938" y="726" font-size="18" fill="#1f2933">login, role checks and</text>
+  <text x="938" y="752" font-size="18" fill="#1f2933">rate limits on every route</text>
+  <text x="938" y="784" font-size="18" font-style="italic" fill="#2e7d4f">a guard cannot act as an admin</text>
+
+  <rect x="1326" y="654" width="382" height="152" rx="10" fill="#ffffff" stroke="#2e7d4f" stroke-width="1.8"/>
+  <text x="1350" y="692" font-size="22" font-weight="bold" fill="#1f2933">Audit</text>
+  <text x="1350" y="726" font-size="18" fill="#1f2933">records every entry attempt,</text>
+  <text x="1350" y="752" font-size="18" fill="#1f2933">granted or denied, with why</text>
+  <text x="1350" y="784" font-size="18" font-style="italic" fill="#2e7d4f">nothing is ever deleted</text>
+
+  <text x="900" y="838" font-size="19" fill="#3f4a56" text-anchor="middle">The phones only display things. Every grant and deny in the system is made here.</text>
+
+  <!-- server to db -->
+  <line x1="900" y1="862" x2="900" y2="914" stroke="#5b6672" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <text x="918" y="896" font-size="19" fill="#3f4a56">reads / writes</text>
+
+  <!-- ===== DATA ===== -->
+  <rect x="60" y="916" width="1680" height="130" rx="14" fill="#f0eaf9" stroke="#6b4fa8" stroke-width="2.5"/>
+  <text x="90" y="956" font-size="24" font-weight="bold" fill="#1f2933">SQLite database</text>
+
+  <rect x="90" y="974" width="304" height="52" rx="9" fill="#ffffff" stroke="#6b4fa8" stroke-width="1.8"/>
+  <text x="242" y="1007" font-size="19" fill="#1f2933" text-anchor="middle">students &amp; guards</text>
+  <rect x="418" y="974" width="304" height="52" rx="9" fill="#ffffff" stroke="#6b4fa8" stroke-width="1.8"/>
+  <text x="570" y="1007" font-size="19" fill="#1f2933" text-anchor="middle">public keys</text>
+  <rect x="746" y="974" width="304" height="52" rx="9" fill="#ffffff" stroke="#6b4fa8" stroke-width="1.8"/>
+  <text x="898" y="1007" font-size="19" fill="#1f2933" text-anchor="middle">one-time codes</text>
+  <rect x="1074" y="974" width="304" height="52" rx="9" fill="#ffffff" stroke="#6b4fa8" stroke-width="1.8"/>
+  <text x="1226" y="1007" font-size="19" fill="#1f2933" text-anchor="middle">entry records</text>
+  <rect x="1402" y="974" width="304" height="52" rx="9" fill="#ffffff" stroke="#6b4fa8" stroke-width="1.8"/>
+  <text x="1554" y="1007" font-size="19" fill="#1f2933" text-anchor="middle">audit log</text>
+
+  <!-- footer -->
+  <text x="900" y="1092" font-size="20" fill="#b3261e" text-anchor="middle">a fresh code every 30 s beats screenshots  ·  one-time use beats replay  ·  the digital signature beats impersonation</text>
+</svg>

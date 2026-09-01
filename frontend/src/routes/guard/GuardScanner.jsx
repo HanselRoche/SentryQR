@@ -1,10 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { Camera, CameraOff, CheckCircle2, ScanLine, XCircle } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import { formatTime, reasonLabel } from '../../lib/format.js';
+import { decisionSplit } from '../../lib/stats.js';
+import PageHeader from '../../components/PageHeader.jsx';
+import Card from '../../components/Card.jsx';
+import Alert from '../../components/Alert.jsx';
+import DataTable from '../../components/DataTable.jsx';
+import StatTile, { StatGrid } from '../../components/StatTile.jsx';
+import { DecisionBadge } from '../../components/Badge.jsx';
 
 const READER_ID = 'qr-reader';
 const RESULT_HOLD_MS = 4000;
+
+const RECENT_COLUMNS = [
+  { key: 'verifiedAt', header: 'Time', render: (entry) => formatTime(entry.verifiedAt) },
+  {
+    key: 'decision',
+    header: 'Result',
+    render: (entry) => <DecisionBadge decision={entry.decision} />,
+  },
+  { key: 'student', header: 'Student', render: (entry) => entry.student?.fullName ?? '—' },
+  { key: 'reasonCode', header: 'Reason', render: (entry) => <code>{entry.reasonCode}</code> },
+];
 
 /**
  * The guard terminal.
@@ -89,67 +108,77 @@ export default function GuardScanner() {
     if (scanner) scanner.stop().then(() => scanner.clear()).catch(() => {});
   }, []);
 
+  const { total, grants, denials } = decisionSplit(recent);
+
   return (
     <>
-      {result && <DecisionBanner result={result} />}
-      {error && <div className="alert error">{error}</div>}
-
-      <div className="card">
-        <div className="row" style={{ justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <h2 style={{ margin: 0 }}>Gate scanner</h2>
-          {scanning ? (
-            <button className="secondary small" onClick={stop}>
+      <PageHeader
+        title="Gate scanner"
+        subtitle="Hold a student's QR in frame. The server decides; this screen only reports."
+        actions={
+          scanning ? (
+            <button className="secondary" onClick={stop}>
+              <CameraOff size={15} />
               Stop camera
             </button>
           ) : (
-            <button onClick={start}>Start camera</button>
-          )}
-        </div>
+            <button onClick={start}>
+              <Camera size={15} />
+              Start camera
+            </button>
+          )
+        }
+      />
 
-        <div id={READER_ID} />
+      {result && <DecisionBanner result={result} />}
+      {error && <Alert tone="error">{error}</Alert>}
 
-        {!scanning && (
-          <p className="muted center" style={{ marginTop: '1rem' }}>
-            Start the camera and hold a student&apos;s QR in frame.
-          </p>
-        )}
-
-        <ManualEntry onSubmit={handleDecoded} />
-      </div>
-
-      {recent.length > 0 && (
-        <div className="card">
-          <h2>Recent scans</h2>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Result</th>
-                  <th>Student</th>
-                  <th>Reason</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recent.map((entry) => (
-                  <tr key={entry.entryEventId}>
-                    <td>{formatTime(entry.verifiedAt)}</td>
-                    <td>
-                      <span className={`badge ${entry.decision === 'GRANT' ? 'grant' : 'deny'}`}>
-                        {entry.decision}
-                      </span>
-                    </td>
-                    <td>{entry.student?.fullName ?? '—'}</td>
-                    <td>
-                      <code>{entry.reasonCode}</code>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {total > 0 && (
+        <StatGrid>
+          <StatTile tone="hero" label="Scans this session" value={total} hint="Since page load" />
+          <StatTile
+            label="Granted"
+            value={grants}
+            icon={<CheckCircle2 size={15} />}
+            hint="Signature verified"
+          />
+          <StatTile
+            label="Denied"
+            value={denials}
+            icon={<XCircle size={15} />}
+            hint="Blocked at the gate"
+          />
+        </StatGrid>
       )}
+
+      <div className="grid-2">
+        <Card title="Camera">
+          {/* #qr-reader stays mounted either way — html5-qrcode looks it up by id. */}
+          <div id={READER_ID} />
+
+          {!scanning && (
+            <div className="scanner-placeholder">
+              <ScanLine size={30} />
+              <strong>Camera is off</strong>
+              <span>Start the camera and hold a student&apos;s QR in frame.</span>
+            </div>
+          )}
+
+          <ManualEntry onSubmit={handleDecoded} />
+        </Card>
+
+        <Card title="Recent scans" subtitle="This session only — the full record lives in the audit log.">
+          {recent.length === 0 ? (
+            <p className="muted">Nothing scanned yet.</p>
+          ) : (
+            <DataTable
+              columns={RECENT_COLUMNS}
+              rows={recent}
+              rowKey={(entry) => entry.entryEventId}
+            />
+          )}
+        </Card>
+      </div>
     </>
   );
 }
@@ -159,7 +188,10 @@ function DecisionBanner({ result }) {
 
   return (
     <div className={`decision-banner ${granted ? 'grant' : 'deny'}`}>
-      <div className="verdict">{granted ? 'ENTRY GRANTED' : 'ENTRY DENIED'}</div>
+      <div className="verdict">
+        {granted ? <CheckCircle2 size={38} /> : <XCircle size={38} />}
+        {granted ? 'ENTRY GRANTED' : 'ENTRY DENIED'}
+      </div>
 
       {granted && result.student ? (
         <div className="who">
@@ -191,17 +223,18 @@ function ManualEntry({ onSubmit }) {
 
   return (
     <details style={{ marginTop: '1rem' }}>
-      <summary className="muted" style={{ cursor: 'pointer' }}>
+      <summary>
+        <ScanLine size={14} />
         Paste a payload instead (no camera available)
       </summary>
-      <form onSubmit={submit} style={{ marginTop: '0.6rem' }}>
+      <form onSubmit={submit} style={{ marginTop: '0.7rem' }}>
         <textarea
           rows={3}
           value={payload}
           placeholder='{"v":1,"sid":2,"n":"…","iat":…,"sig":"…"}'
           onChange={(event) => setPayload(event.target.value)}
         />
-        <button type="submit" className="secondary small" style={{ marginTop: '0.5rem' }}>
+        <button type="submit" className="secondary small" style={{ marginTop: '0.6rem' }}>
           Verify payload
         </button>
       </form>

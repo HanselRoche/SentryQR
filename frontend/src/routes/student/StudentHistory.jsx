@@ -1,6 +1,34 @@
 import { useEffect, useState } from 'react';
+import { CheckCircle2, History, XCircle } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import { formatTime, reasonLabel } from '../../lib/format.js';
+import { decisionSplit, topBy } from '../../lib/stats.js';
+import { chartColors } from '../../lib/colors.js';
+import PageHeader from '../../components/PageHeader.jsx';
+import Card from '../../components/Card.jsx';
+import Alert from '../../components/Alert.jsx';
+import DataTable from '../../components/DataTable.jsx';
+import EmptyState from '../../components/EmptyState.jsx';
+import StatTile, { StatGrid } from '../../components/StatTile.jsx';
+import { DecisionBadge } from '../../components/Badge.jsx';
+import DecisionDonut from '../../components/charts/DecisionDonut.jsx';
+import ReasonBar from '../../components/charts/ReasonBar.jsx';
+
+const COLUMNS = [
+  { key: 'createdAt', header: 'When', render: (entry) => formatTime(entry.createdAt) },
+  {
+    key: 'decision',
+    header: 'Result',
+    render: (entry) => <DecisionBadge decision={entry.decision} />,
+  },
+  {
+    key: 'reasonCode',
+    header: 'Reason',
+    className: 'wrap-cell',
+    render: (entry) => reasonLabel(entry.reasonCode),
+  },
+  { key: 'guardName', header: 'Verified by', render: (entry) => entry.guardName ?? '—' },
+];
 
 export default function StudentHistory() {
   const [entries, setEntries] = useState(null);
@@ -13,47 +41,77 @@ export default function StudentHistory() {
       .catch((err) => setError(err.message));
   }, []);
 
-  if (error) return <div className="alert error">{error}</div>;
-  if (!entries) return <p className="muted">Loading…</p>;
+  if (error) return <Alert tone="error">{error}</Alert>;
+
+  const { total, grants, denials } = decisionSplit(entries ?? []);
 
   return (
-    <div className="card">
-      <h2>Entry history</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Every attempt on your account, granted or denied. A denial you do not recognise is worth
-        reporting — it may mean someone tried to use a copy of your QR.
-      </p>
+    <>
+      <PageHeader
+        title="Entry history"
+        subtitle="Every attempt on your account, granted or denied. A denial you do not recognise is worth reporting — it may mean someone tried to use a copy of your QR."
+      />
 
-      {entries.length === 0 ? (
-        <p className="muted">No entry attempts recorded yet.</p>
-      ) : (
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>When</th>
-                <th>Result</th>
-                <th>Reason</th>
-                <th>Verified by</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.map((entry) => (
-                <tr key={entry.id}>
-                  <td>{formatTime(entry.createdAt)}</td>
-                  <td>
-                    <span className={`badge ${entry.decision === 'GRANT' ? 'grant' : 'deny'}`}>
-                      {entry.decision}
-                    </span>
-                  </td>
-                  <td>{reasonLabel(entry.reasonCode)}</td>
-                  <td>{entry.guardName ?? '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {entries && entries.length > 0 && (
+        <>
+          <StatGrid>
+            <StatTile
+              tone="hero"
+              label="Total attempts"
+              value={total}
+              hint="On your account"
+            />
+            <StatTile
+              label="Granted"
+              value={grants}
+              icon={<CheckCircle2 size={15} />}
+              hint="Verified at the gate"
+            />
+            <StatTile
+              label="Denied"
+              value={denials}
+              icon={<XCircle size={15} />}
+              hint="Blocked before entry"
+            />
+          </StatGrid>
+
+          <div className="grid-2">
+            <Card title="Grant rate" subtitle="Across every attempt on your account.">
+              <DecisionDonut entries={entries} />
+            </Card>
+
+            <Card
+              title="Why entries were denied"
+              subtitle="A reason you cannot account for is worth reporting."
+            >
+              <ReasonBar
+                data={topBy(
+                  entries.filter((entry) => entry.decision === 'DENY'),
+                  'reasonCode',
+                  6,
+                )}
+                label={reasonLabel}
+                colorFor={() => chartColors().deny}
+                height={210}
+              />
+            </Card>
+          </div>
+        </>
       )}
-    </div>
+
+      <Card title="Full history">
+        <DataTable
+          columns={COLUMNS}
+          rows={entries}
+          loading={!entries}
+          empty={
+            <EmptyState icon={History} title="No entry attempts yet">
+              Once a guard scans your QR at the gate, every decision — granted or denied — shows up
+              here.
+            </EmptyState>
+          }
+        />
+      </Card>
+    </>
   );
 }
