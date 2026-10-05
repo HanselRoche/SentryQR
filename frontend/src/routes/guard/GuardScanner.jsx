@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { Camera, CameraOff, CheckCircle2, ScanLine, XCircle } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import { formatTime, reasonLabel } from '../../lib/format.js';
@@ -13,6 +13,21 @@ import { DecisionBadge } from '../../components/Badge.jsx';
 
 const READER_ID = 'qr-reader';
 const RESULT_HOLD_MS = 4000;
+
+function cameraErrorMessage(err) {
+  const name = err?.name ?? '';
+  const detail = err?.message ?? String(err);
+  if (name === 'NotAllowedError' || /permission/i.test(detail)) {
+    return 'Camera permission denied. Allow camera access for this site in the browser, then press Start again.';
+  }
+  if (name === 'NotReadableError') {
+    return 'Camera is in use by another app or tab. Close it and press Start again.';
+  }
+  if (name === 'NotFoundError') {
+    return 'No camera found on this device.';
+  }
+  return `Could not start the camera: ${detail}`;
+}
 
 const RECENT_COLUMNS = [
   { key: 'verifiedAt', header: 'Time', render: (entry) => formatTime(entry.verifiedAt) },
@@ -68,24 +83,69 @@ export default function GuardScanner() {
   }, []);
 
   const start = useCallback(async () => {
+    if (scannerRef.current) return; // already starting or running
     setError(null);
-    try {
-      const scanner = new Html5Qrcode(READER_ID, { verbose: false });
-      scannerRef.current = scanner;
 
-      await scanner.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        handleDecoded,
-        () => {}, // per-frame decode misses are normal; ignore them
-      );
-      setScanning(true);
-    } catch (err) {
+    if (!navigator.mediaDevices?.getUserMedia) {
       setError(
-        `Could not start the camera: ${err?.message ?? err}. ` +
-          'Camera access needs a secure context — use http://localhost, or enable HTTPS to scan from a phone over the network.',
+        'Camera unavailable: this page is not in a secure context. Use http://localhost, or enable HTTPS to scan from a phone over the network.',
       );
+      return;
     }
+
+    const scanner = new Html5Qrcode(READER_ID, {
+      verbose: false,
+      formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+      experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+    });
+    scannerRef.current = scanner;
+
+    const config = {
+      fps: 10,
+      // The payload is a dense QR (signature + nonce), so scan most of the
+      // frame rather than a small fixed box.
+      qrbox: (width, height) => {
+        const side = Math.floor(Math.min(width, height) * 0.8);
+        return { width: side, height: side };
+      },
+    };
+
+    // Prefer the rear camera, but desktops often have none and some browsers
+    // reject the constraint outright — fall back to any available camera.
+    const attempts = [{ facingMode: 'environment' }];
+    try {
+      const cameras = await Html5Qrcode.getCameras();
+      if (cameras.length > 0) attempts.push({ deviceId: { exact: cameras[cameras.length - 1].id } });
+    } catch {
+      // Permission not granted yet; the first attempt will prompt for it.
+    }
+    attempts.push({ facingMode: 'user' });
+
+    let lastError;
+    for (const camera of attempts) {
+      try {
+        // html5-qrcode ignores the camera argument once videoConstraints is
+        // set, so the camera choice goes inside the constraints. Webcams often
+        // default to 640x480, too coarse for a dense QR, hence the ideal size.
+        await scanner.start(
+          camera,
+          {
+            ...config,
+            videoConstraints: { ...camera, width: { ideal: 1280 }, height: { ideal: 720 } },
+          },
+          handleDecoded,
+          () => {}, // per-frame decode misses are normal; ignore them
+        );
+        setScanning(true);
+        return;
+      } catch (err) {
+        lastError = err;
+        if (err?.name === 'NotAllowedError') break; // retrying won't help
+      }
+    }
+
+    scannerRef.current = null;
+    setError(cameraErrorMessage(lastError));
   }, [handleDecoded]);
 
   const stop = useCallback(async () => {

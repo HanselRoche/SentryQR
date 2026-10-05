@@ -851,11 +851,28 @@ tbody tr:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.qr-layout {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: 1.5rem;
+}
+
+.reasons {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.reasons li + li {
+  margin-top: 0.6rem;
 }
 
 .qr-frame {
   background: #fff;
+  box-sizing: border-box;
+  max-width: 100%;
   padding: 16px;
   border-radius: 18px;
   line-height: 0;
@@ -867,9 +884,38 @@ tbody tr:hover {
    only !important can size it down — same reason #qr-reader video needs it. */
 .qr-frame canvas {
   display: block;
-  width: min(280px, 70vw) !important;
+  width: min(360px, 70vw) !important;
   height: auto !important;
   image-rendering: pixelated;
+}
+
+/* Fills the viewport for scanning from a distance. The same canvas is reused,
+   so the QR keeps refreshing while this is open. */
+.qr-frame.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2vmin;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: zoom-out;
+}
+
+.qr-frame.fullscreen canvas {
+  width: min(92vmin, 92vw) !important;
+  height: auto !important;
+}
+
+.qr-fullscreen-hint {
+  line-height: 1.4;
+  color: #444;
+  font-size: 1rem;
 }
 
 .qr-frame.stale {

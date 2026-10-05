@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
-import { ChevronDown, Fingerprint, RefreshCw, RotateCcw, ShieldCheck } from 'lucide-react';
+import { ChevronDown, Fingerprint, Maximize2, RefreshCw, RotateCcw, ShieldCheck } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import {
   buildQrPayload,
@@ -206,6 +206,17 @@ function QrCard({ challenge, deviceKey, onReset }) {
   const canvasRef = useRef(null);
   const [remaining, setRemaining] = useState(0);
   const [proof, setProof] = useState(null);
+  const [fullscreen, setFullscreen] = useState(false);
+
+  // Esc closes the fullscreen view.
+  useEffect(() => {
+    if (!fullscreen) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') setFullscreen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [fullscreen]);
 
   // Draw whenever the payload changes.
   useEffect(() => {
@@ -213,7 +224,7 @@ function QrCard({ challenge, deviceKey, onReset }) {
     QRCode.toCanvas(canvasRef.current, challenge.payload, {
       width: 560,
       margin: 1,
-      errorCorrectionLevel: 'M',
+      errorCorrectionLevel: 'L',
       color: { dark: '#000000', light: '#ffffff' },
     }).catch(() => {});
   }, [challenge]);
@@ -239,12 +250,25 @@ function QrCard({ challenge, deviceKey, onReset }) {
   };
 
   return (
-    <div className="grid-2">
+    <div className="grid-2 qr-layout">
       <Card>
         <div className="qr-stage">
-          <div className={`qr-frame${expired ? ' stale' : ''}`}>
+          <div
+            className={`qr-frame${expired ? ' stale' : ''}${fullscreen ? ' fullscreen' : ''}`}
+            onClick={fullscreen ? () => setFullscreen(false) : undefined}
+          >
             <canvas ref={canvasRef} />
+            {fullscreen && (
+              <div className="qr-fullscreen-hint">
+                {expired ? 'Expired — refreshing' : `Valid for ${seconds}s`} · tap or press Esc to close
+              </div>
+            )}
           </div>
+
+          <button className="secondary small" onClick={() => setFullscreen(true)}>
+            <Maximize2 size={14} />
+            Full screen
+          </button>
 
           <div className="countdown">
             <div
@@ -264,7 +288,7 @@ function QrCard({ challenge, deviceKey, onReset }) {
         title="Why a screenshot of this is useless"
         subtitle="Three independent properties, each enough on its own to defeat a copy."
       >
-        <ul className="muted" style={{ marginTop: 0, paddingLeft: '1.1rem' }}>
+        <ul className="muted reasons">
           <li>
             It expires {Math.round(total / 1000)} seconds after it was issued, and is replaced
             before that.
@@ -276,7 +300,7 @@ function QrCard({ challenge, deviceKey, onReset }) {
           </li>
         </ul>
 
-        <div className="row" style={{ marginTop: '1rem' }}>
+        <div className="row" style={{ marginTop: '1.25rem' }}>
           <button className="secondary small" onClick={checkExtractability}>
             <ShieldCheck size={14} />
             Verify the private key cannot be exported
